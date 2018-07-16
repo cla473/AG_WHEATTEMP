@@ -22,9 +22,9 @@ def main():
 	count = 0
 	for name in dbfile_df.filename:
 		count += 1
-		Apsim_SqLite.getReportData(name)
+		Apsim_SqLite.process_Apsim_dbfile(name)
 
-		if count >= 10:
+		if count >= 2:
 			break;
 
 
