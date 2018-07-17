@@ -10,7 +10,7 @@ import pandas as pd
 
 # define the working directories
 apsim_sourcedir = "/OSM/CBR/AG_WHEATTEMP/source"
-apsim_outfiledir = "/OSM/CBR/AG_WHEATTEMP/work"
+apsim_outfiledir = "/OSM/CBR/AG_WHEATTEMP/work/output"
 metfile_sourcedir = "/OSM/CBR/AG_WHEATTEMP/work/ApsimNG-test/APSIM_run/met"
 
 
@@ -77,22 +77,18 @@ def get_report_details(dbname):
 	return dfReport
 
 
-
-def get_weather_filename(sourceDir, dbname):
+def get_filename(dbname):
 	'''
-	Takes in the sourceDirectory for the met files, and the SQLite database filename
-	and returns the fullpath/filename of the met file
+	Takes the full path and filename for the database file, and creates the filename
+	that is used for the weather file, and to save the output.
 
 	Note:  cannot use the db filename as it doesn't have the long & lat that we require
 	       need to manipulate the filename to add the underscrore '_' char
 	'''
-
 	filename = os.path.basename(dbname)
 	filename = os.path.splitext(filename)[0]
 	nameparts = filename.split('-')
-
 	filename = nameparts[0] + '_-' + nameparts[1]
-	filename = sourceDir + "/c_" + filename + ".met"
 
 	return filename
 
@@ -131,14 +127,14 @@ def read_ApsimWeather(filename):
 
 
 
-def get_weather_details(dbname):
+def get_weather_details(filename):
 	'''
 	Retrieves the weather data for the location (long,lat) specified in the dbname,
 	formats the data, and returns a dataframe
 	'''
 
-	filename = get_weather_filename(metfile_sourcedir, dbname)
-	dfWeather = read_ApsimWeather(filename)
+	fullfilename = metfile_sourcedir + "/c_" + filename + ".met"
+	dfWeather = read_ApsimWeather(fullfilename)
 
 	return dfWeather
 
@@ -154,7 +150,8 @@ def process_Apsim_dbfile(dbname):
 	print(dfSim.head(5))
 
 	# retrieve the weather data from the weather '.met' file
-	dfWeather = get_weather_details(dbname)
+	filename = get_filename(dbname)
+	dfWeather = get_weather_details(filename)
 	print(dfWeather.shape)
 	print(dfWeather.head(5))
 
@@ -163,7 +160,39 @@ def process_Apsim_dbfile(dbname):
 	print(dfReport.shape)
 	print(dfReport.head(5))
 
+	# combine the report data with the weather data
+	dfCombined = dfReport.merge(dfWeather, on='runDate', how='left')
 
+	# filter the data based on the information we want
+	filterCols = ['SimID', 'runDate', 'ZadokStage', 'avgTemp']
+	dfSubData = dfCombined[filterCols]
+
+	# combine the data with the Simulation details, so that we can get the sow date
+	# and filter it again
+	dfSubData = dfSubData.merge(dfSim, on="SimID", how='left')
+	filterCols = ['SimID', 'runDate', 'ZadokStage', 'avgTemp', 'sowdate']
+	dfSubData = dfSubData[filterCols]
+
+	# create a sowing date (with current year)
+	dfSubData['sowingdate'] = dfSubData['sowdate'] + '-' + dfSubData['runDate'].dt.year.map(str)
+	dfSubData['sowingdate'] = pd.to_datetime(dfSubData['sowingdate'], format="%d-%b-%Y")
+
+	# now calculate the cumulative temp info for each simulation
+	dfSubData['tempavgTemp'] = dfSubData['avgTemp'].where((dfSubData['runDate'] >= dfSubData['sowingdate']) 
+														  & (dfSubData['ZadokStage'] > 0) 
+                                                          & (dfSubData['ZadokStage'] <= 70), 0)
+	dfSubData['cumAvgTemp'] = dfSubData.groupby(by=['SimID','sowingdate'])['tempavgTemp'].cumsum()
+
+	# filter the data on the tempavgTemp column
+	newData = dfSubData[dfSubData['tempavgTemp'] > 0]
+	newData1 = newData.groupby(['SimID','sowdate'])['cumAvgTemp'].max().reset_index()
+	newData2 = newData1.groupby(['SimID','sowdate'])['cumAvgTemp'].mean().reset_index()
+
+	outfilename = apsim_outfiledir + "/" + filename + "_zadok.csv"
+	newData2.to_csv(outfilename, encoding='utf-8', index=False)
+
+	# to append to the file, need to use mode='a'
+	#newData2.to_csv(filename, encoding='utf-8', index=False, header=False, mode='a')
 
 
 
