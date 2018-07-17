@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # import files
 import argparse
 import sys
@@ -77,6 +79,7 @@ def get_report_details(dbname):
 	return dfReport
 
 
+
 def get_filename(dbname):
 	'''
 	Takes the full path and filename for the database file, and creates the filename
@@ -142,23 +145,24 @@ def get_weather_details(filename):
 
 def process_Apsim_dbfile(dbname):
 
-	print("dbname: ", dbname)
+	print("processing file: ", dbname)
+	print("started at ", datetime.datetime.now())
 
 	# retrieve the Simulation Details from the DB._Sumulation table
 	dfSim = get_simulation_details(dbname) 
-	print(dfSim.shape)
-	print(dfSim.head(5))
+	#print(dfSim.shape)
+	#print(dfSim.head(5))
 
 	# retrieve the weather data from the weather '.met' file
 	filename = get_filename(dbname)
 	dfWeather = get_weather_details(filename)
-	print(dfWeather.shape)
-	print(dfWeather.head(5))
+	#print(dfWeather.shape)
+	#print(dfWeather.head(5))
 
 	# retrieve the Details from the DB.Report table
 	dfReport = get_report_details(dbname)
-	print(dfReport.shape)
-	print(dfReport.head(5))
+	#print(dfReport.shape)
+	#print(dfReport.head(5))
 
 	# combine the report data with the weather data
 	dfCombined = dfReport.merge(dfWeather, on='runDate', how='left')
@@ -188,11 +192,17 @@ def process_Apsim_dbfile(dbname):
 	newData1 = newData.groupby(['SimID','sowdate'])['cumAvgTemp'].max().reset_index()
 	newData2 = newData1.groupby(['SimID','sowdate'])['cumAvgTemp'].mean().reset_index()
 
+	# need to add back in the longitude, latitude, variety from dfSim
+	newData2 = newData2.merge(dfSim, on=['SimID', 'sowdate'], how='left')
+	filterCols = ['SimID', 'long', 'lat', 'variety', 'sowdate', 'cumAvgTemp']
+	newData2 = newData2[filterCols]
+
 	outfilename = apsim_outfiledir + "/" + filename + "_zadok.csv"
 	newData2.to_csv(outfilename, encoding='utf-8', index=False)
 
 	# to append to the file, need to use mode='a'
 	#newData2.to_csv(filename, encoding='utf-8', index=False, header=False, mode='a')
+	print("finished at ", datetime.datetime.now())
 
 
 
