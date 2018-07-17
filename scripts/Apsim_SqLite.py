@@ -212,7 +212,7 @@ def main(args):
 
 	args = parser.parse_args()
 	dbname = args.filename
-
+	process_Apsim_dbfile(dbname)
 
 
 if __name__ == '__main__':
