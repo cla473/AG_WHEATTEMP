@@ -24,7 +24,7 @@ def main():
 		count += 1
 		Apsim_SqLite.process_Apsim_dbfile(name)
 
-		if count >= 2:
+		if count >= 1:
 			break;
 
 
