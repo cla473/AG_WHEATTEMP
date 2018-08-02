@@ -72,7 +72,7 @@ def get_simulation_details(dbname):
 
 
 
-def get_variety_SimIDs(dfSim, varieties)
+def get_variety_SimIDs(dfSim, varieties):
     '''
     Creates a list of SimulationIDs based on a list of varieties
     '''
@@ -101,13 +101,12 @@ def get_report_details(dbname, simIdStr, startDate, endDate):
 	cur = con.cursor()
 
 	# get contents of the Report Table
-    strSql = "SELECT DISTINCT SimulationID, substr([Clock.Today], 1, 10) as runDate, \
+	strSql = "SELECT DISTINCT SimulationID, substr([Clock.Today], 1, 10) as runDate, \
           [Wheat.Leaf.LAI] as LAI, [Wheat.AboveGround.Wt] as Biomass, \
           [Wheat.Grain.Wt] as Yield, [Wheat.Phenology.Zadok.Stage] as ZadokStage, \
           [Wheat.WaterSupplyDemandRatio] as WSDR \
           FROM Report \
-          WHERE SimulationID IN (" + simIdStr + ") \
-            AND [Wheat.Phenology.Zadok.Stage] > 0 \
+          WHERE SimulationID IN (" + simIdStr + ") AND [Wheat.Phenology.Zadok.Stage] > 0 \
           ORDER BY SimulationID, runDate"
 
 	#print(datetime.datetime.now())
@@ -176,8 +175,8 @@ def read_ApsimWeather(filename, latitude, startDate, endDate):
 
     # these XYPairs are use when calculating Thermal Time
     # and are specific to Wheat only
-    xp = [0, 26, 37]
-    fp = [0, 26, 0]
+	xp = [0, 26, 37]
+	fp = [0, 26, 0]
 
 	lineNo = 0
 	with open(filename, "r") as f:
@@ -188,36 +187,35 @@ def read_ApsimWeather(filename, latitude, startDate, endDate):
 
     # return the data using the starting line no (determined above)
     # original column names=['year','day', 'radn', 'maxt', 'mint', 'rain']
-    metData = pd.read_table(filename, sep='\s+', header=None, skiprows=lineNo+1,
+	metData = pd.read_table(filename, sep='\s+', header=None, skiprows=lineNo+1,
                             names=['year','dayofYear', 'radiation', 'maxTemp', 'minTemp', 'rain'])
     # add the calculated columns
-    metData['runDate'] = pd.to_datetime(metData['year'].astype(str) + " " + \
-                         metData['dayofYear'].astype(str), format="%Y %j")
+	metData['runDate'] = pd.to_datetime(metData['year'].astype(str) + " " + metData['dayofYear'].astype(str), format="%Y %j")
 
 	#filter this file based on the dates we are working with
-    metData = metData[(metData['runDate'] >= startDate) & (metData['runDate'] <= endDate)] 
+	metData = metData[(metData['runDate'] >= startDate) & (metData['runDate'] <= endDate)] 
 
     # this may need to be the thermal time, not just average temp
-    metData['avgTemp'] = (metData['maxTemp'] + metData['minTemp']) / 2
+	metData['avgTemp'] = (metData['maxTemp'] + metData['minTemp']) / 2
 
 	# calculate the Apsim Thermal Time
 	metData['ApsimTT'] = metData.apply(lambda x: linint_3hrly_Temperature(x['maxTemp'], x['minTemp'], xp, fp), axis=1)
 
     #convert the radiation from MJ/m2/day to Photosynthetically active radiation (PAR)
-    metData['PARIO'] = metData['radiation'] * 0.47
+	metData['PARIO'] = metData['radiation'] * 0.47
 
     #convert the measurement unit for the radiation from MJ/m2/day to J/m2/day
-    metData['radnJ'] = metData['radiation'] * 1000000
+	metData['radnJ'] = metData['radiation'] * 1000000
 
-    metData['PQ'] = metData['PARIO'] / metData['avgTemp']
+	metData['PQ'] = metData['PARIO'] / metData['avgTemp']
 
     # calculation the day length
-    radians = math.pi/180
-    lambdaRadians = float(latitude) * radians
+	radians = math.pi/180
+	lambdaRadians = float(latitude) * radians
 
-    sinLAT = math.sin(lambdaRadians)
-    cosLAT = math.cos(lambdaRadians)
-    sinDMC = math.sin(radians * 23.45)
+	sinLAT = math.sin(lambdaRadians)
+	cosLAT = math.cos(lambdaRadians)
+	sinDMC = math.sin(radians * 23.45)
 
     #print("radians: ", radians)
     #print("lambdaRadians: ", lambdaRadians)
@@ -225,50 +223,50 @@ def read_ApsimWeather(filename, latitude, startDate, endDate):
     #print("cosLAT: ", cosLAT)
     #print("sinDMC: ", sinDMC)
 
-    metData['sinDEC'] = -sinDMC * np.cos(2 * math.pi * (metData['dayofYear'] + 10) / 365)
-    metData['cosDEC'] = np.sqrt(1 - (metData['sinDEC'] * metData['sinDEC']))
-    metData['a'] = sinLAT * metData['sinDEC']
-    metData['b'] = cosLAT * metData['cosDEC']
+	metData['sinDEC'] = -sinDMC * np.cos(2 * math.pi * (metData['dayofYear'] + 10) / 365)
+	metData['cosDEC'] = np.sqrt(1 - (metData['sinDEC'] * metData['sinDEC']))
+	metData['a'] = sinLAT * metData['sinDEC']
+	metData['b'] = cosLAT * metData['cosDEC']
 
-    metData['daylength'] = 12 * (1 + (2 / math.pi) * np.arcsin(metData['a']/metData['b']))
+	metData['daylength'] = 12 * (1 + (2 / math.pi) * np.arcsin(metData['a']/metData['b']))
 
     # calculate the Fraction Disfused Radiation (FDR)
-    metData['hour'] = np.mod(metData['dayofYear'], 1) * 24
-    metData['sinB'] = metData['a'] + metData['b'] * np.cos(2 * math.pi * \
-					  (metData['hour'] - 12) / 24)
-    metData['SC'] = 1367 * (1 + 0.033 * np.cos(2 * math.pi * (metData['dayofYear'] - 10) / 365))
-    metData['sinINT'] = metData['a'] * metData['daylength'] + (24 * metData['b'] / math.pi) * \
+	metData['hour'] = np.mod(metData['dayofYear'], 1) * 24
+	metData['sinB'] = metData['a'] + metData['b'] * np.cos(2 * math.pi * (metData['hour'] - 12) / 24)
+	metData['SC'] = 1367 * (1 + 0.033 * np.cos(2 * math.pi * (metData['dayofYear'] - 10) / 365))
+	metData['sinINT'] = metData['a'] * metData['daylength'] + (24 * metData['b'] / math.pi) * \
                         np.cos((math.pi / 2) * ((metData['daylength'] / 12) - 1))
 
-    metData['Ta'] = metData['radnJ'] / (metData['sinINT'] * 3600 * metData['SC'])
-    metData['FDR'] = metData['Ta'] * -1.6 +1.32
+	metData['Ta'] = metData['radnJ'] / (metData['sinINT'] * 3600 * metData['SC'])
+	metData['FDR'] = metData['Ta'] * -1.6 +1.32
 
     # calculate the Evapotranspiration
-    metData['vpsl'] = 238.102 * 17.32491 * ((metData['minTemp'] + metData['maxTemp']) /2) / \
+	metData['vpsl'] = 238.102 * 17.32491 * ((metData['minTemp'] + metData['maxTemp']) /2) / \
                       (((metData['minTemp'] + metData['maxTemp']) / 2) + 238.102) ** 2
-    metData['ETpt'] = 1.26 * (metData['radnJ']  * (metData['vpsl'] / (metData['vpsl'] \
+	metData['ETpt'] = 1.26 * (metData['radnJ']  * (metData['vpsl'] / (metData['vpsl'] \
 					  + 0.067))) / 2454000
 
     # sort the columns to be a little more logical
 	cols=['year', 'dayofYear', 'runDate', 'daylength', 'maxTemp', 'minTemp', 'avgTemp', \
 		  'ApsimTT', 'rain', 'PARIO', 'PQ', 'FDR', 'vpsl', 'ETpt']
-    metData = metData[cols]
+	metData = metData[cols]
 
 
 	return metData
 
 
 
+
 def get_weather_details(filename, latitude, startDate, endDate):
-    '''
-    Retrieves the weather data for the location (long,lat) specified in the dbname,
-    formats the data, and returns a dataframe
-    '''
+	'''
+	Retrieves the weather data for the location (long,lat) specified in the dbname,
+	formats the data, and returns a dataframe
+	'''
 
-    fullfilename = metfile_sourcedir + "/c_" + filename + ".met"
-    dfWeather = read_ApsimWeather(fullfilename, latitude, startDate, endDate)
+	fullfilename = metfile_sourcedir + "/c_" + filename + ".met"
+	dfWeather = read_ApsimWeather(fullfilename, latitude, startDate, endDate)
 
-    return dfWeather
+	return dfWeather
 
 
 
@@ -280,8 +278,8 @@ def process_Apsim_dbfile(dbname):
 
 	# retrieve the weather data from the weather '.met' file
 	filename, latitude = get_filename(dbname)
-	print("filename: ", filename)
-	print("latitude: ", latitude)
+	#print("filename: ", filename)
+	#print("latitude: ", latitude)
 
 
 	dfWeather = get_weather_details(filename, latitude, startDate, endDate)
@@ -346,13 +344,11 @@ def process_Apsim_dbfile(dbname):
 	# need to add the '10_Harvest' phase, but cannot modify categorical data
     # so need to convert phases to strings
 	dfCombined['phases'] = dfCombined['phases'].astype(str)
-	dfCombined.loc[(dfCombined['ZadokStage'] == 90) & (dfCombined['cumPhaseApsimTT'] >= 300 ), \
-					'phases'] = '10_Harvest'
+	dfCombined.loc[(dfCombined['ZadokStage'] == 90) & (dfCombined['cumPhaseApsimTT'] >= 300 ),'phases'] = '10_Harvest'
 
 	#  only need to keep the first row that is for '10_Harvest', so need to
     #  identify (flag) those records that need to be kept.
-	dfCombined.loc[dfCombined.groupby(['SimID','sowingdate','phases']) \ 
-				['cumPhaseApsimTT'].idxmin(),'firstHarvest'] = 1
+	dfCombined.loc[dfCombined.groupby(['SimID','sowingdate','phases'])['cumPhaseApsimTT'].idxmin(),'firstHarvest'] = 1
 	dfCombined.loc[(dfCombined['phases'] != '10_Harvest' ),'firstHarvest'] = 1
 	dfCombined['firstHarvest'] = dfCombined.firstHarvest.fillna(0).astype(int)
 	# now filter based on the flag we crated
@@ -399,11 +395,11 @@ def process_Apsim_dbfile(dbname):
 
 
 	# geth the values for the last day in each phase 
-	fSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseavgTemp'].max().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumavgTemp']
+	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseAvgTemp'].max().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumAvgTemp']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	fSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseApsimTT'].max().reset_index()
+	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseApsimTT'].max().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumApsimTT']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
@@ -462,15 +458,15 @@ def process_Apsim_dbfile(dbname):
 
 	# get the counts of various miniumum temperatures
 	dfSum = dfCombined[dfCombined['minTemp'] <= 0].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'day<=0']
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days<=0']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
 	dfSum = dfCombined[dfCombined['minTemp'] <= -1].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'day<=-1']
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days<=-1']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
 	dfSum = dfCombined[dfCombined['minTemp'] <= -2].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'day<=-2']
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days<=-2']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
 	dfSum = dfCombined[dfCombined['minTemp'] <= -3].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
@@ -502,6 +498,21 @@ def process_Apsim_dbfile(dbname):
 	dfSum = dfCombined[dfCombined['maxTemp'] >= 40].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days>=40']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+
+	#Need to marry back to Simulation details to get cultivar
+	dfSummary = dfSummary.merge(dfSim, on="SimID", how='left')
+	#cols = dfSummary.columns.values.tolist()
+	#print(cols)
+	cols = ['SimID', 'variety', 'long', 'lat', 'sowingdate', 'phases', 
+	        'season_cumAvgTemp', 'season_cumApsimTT', 'season_cumRain', 'startDate', 'endDate', 
+	        'dayCount', 'minTemp', 'maxTemp', 'avgTemp', 'ApsimTT', 'avgdaylength', 
+	        'cumAvgTemp', 'cumApsimTT', 'cumRain', 'avgWSDR', 'cumETpt', 'cumPARIO', 
+	        'avgPARIO', 'avgFDR', 'avgPQ', 'Biomass', 'LAI', 'Yield', 
+	        'days<=0', 'days<=-1', 'days<=-2', 'days<=-3', 
+	        'days>=30', 'days>=32', 'days>=34', 'days>=36', 'days>=38', 'days>=40']
+	dfSummary = dfSummary[cols]
+	#dfSummary
 
 
 	# now save the summary file
