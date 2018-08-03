@@ -73,19 +73,19 @@ def get_simulation_details(dbname):
 
 
 def get_variety_SimIDs(dfSim, varieties):
-    '''
-    Creates a list of SimulationIDs based on a list of varieties
-    '''
+	'''
+	Creates a list of SimulationIDs based on a list of varieties
+	'''
 
-    dfSimVar = dfSim[dfSim['variety'].isin(varieties)]
-    #print(dfSimVar.shape)
-    #dfSimVar
+	dfSimVar = dfSim[dfSim['variety'].isin(varieties)]
+	#print(dfSimVar.shape)
+	#dfSimVar
 
-    #now create a list of the SimId's
-    simIds = dfSimVar.index.tolist()
-    simIdStr = ', '.join(str(e) for e in simIds)
+	#now create a list of the SimId's
+	simIds = dfSimVar.index.tolist()
+	simIdStr = ', '.join(str(e) for e in simIds)
 
-    return simIdStr
+	return simIdStr
 
 
 
@@ -127,42 +127,42 @@ def get_report_details(dbname, simIdStr, startDate, endDate):
 
 
 def get_filename(dbname):
-    '''
-    Takes the full path and filename for the database file, and creates the filename
-    that is used for the weather file, and to save the output.
+	'''
+	Takes the full path and filename for the database file, and creates the filename
+	that is used for the weather file, and to save the output.
 
-    Note:  cannot use the db filename as it doesn't have the long & lat that we require
-           need to manipulate the filename to add the underscrore '_' char
-           ONLY need to allow for negative (south) latitudes
-    '''
+	Note:  cannot use the db filename as it doesn't have the long & lat that we require
+	       need to manipulate the filename to add the underscrore '_' char
+	       ONLY need to allow for negative (south) latitudes
+	'''
 
-    filename = os.path.basename(dbname)
-    filename = os.path.splitext(filename)[0]
-    nameparts = filename.split('-')
-    filename = nameparts[0] + '_-' + nameparts[1]
-    lat = '-' + nameparts[1]
+	filename = os.path.basename(dbname)
+	filename = os.path.splitext(filename)[0]
+	nameparts = filename.split('-')
+	filename = nameparts[0] + '_-' + nameparts[1]
+	lat = '-' + nameparts[1]
 
-    return filename, lat
+	return filename, lat
 
 
 def linint_3hrly_Temperature(tmax, tmin, xp, fp):
-    '''
-    Eight interpolations of the air temperature are calculated using 
-    a three-hour correction factor.
-    For each air three-hour air temperature, a value is calculated.
-    The eight three-hour estimates are then averaged to obtain the daily value.
-    '''
+	'''
+	Eight interpolations of the air temperature are calculated using 
+	a three-hour correction factor.
+	For each air three-hour air temperature, a value is calculated.
+	The eight three-hour estimates are then averaged to obtain the daily value.
+	'''
 
-    #Local Variables
-    tot = 0.0            #sum_of of 3 hr interpolations
+	#Local Variables
+	tot = 0.0            #sum_of of 3 hr interpolations
 
-    for period in range(1, num3hr):
-        #get mean temperature for 3 hr period (oC)
-        tmean_3hour = tmin + (t_range_fract[period-1] * (tmax - tmin))
-        tot = tot + np.interp(tmean_3hour, xp,fp)
-        #print("tmean_3hour: ", tmean_3hour, " - tot: ", tot)
+	for period in range(1, num3hr):
+        	#get mean temperature for 3 hr period (oC)
+		tmean_3hour = tmin + (t_range_fract[period-1] * (tmax - tmin))
+		tot = tot + np.interp(tmean_3hour, xp,fp)
+		#print("tmean_3hour: ", tmean_3hour, " - tot: ", tot)
 
-    return tot / num3hr;
+	return tot / num3hr;
 
 
 
@@ -173,8 +173,8 @@ def read_ApsimWeather(filename, latitude, startDate, endDate):
 	average temperature (based on maxt and mint).
 	'''
 
-    # these XYPairs are use when calculating Thermal Time
-    # and are specific to Wheat only
+	# these XYPairs are use when calculating Thermal Time
+	# and are specific to Wheat only
 	xp = [0, 26, 37]
 	fp = [0, 26, 0]
 
@@ -185,31 +185,31 @@ def read_ApsimWeather(filename, latitude, startDate, endDate):
 			if line.startswith('year'):
 				break;
 
-    # return the data using the starting line no (determined above)
-    # original column names=['year','day', 'radn', 'maxt', 'mint', 'rain']
+	# return the data using the starting line no (determined above)
+	# original column names=['year','day', 'radn', 'maxt', 'mint', 'rain']
 	metData = pd.read_table(filename, sep='\s+', header=None, skiprows=lineNo+1,
                             names=['year','dayofYear', 'radiation', 'maxTemp', 'minTemp', 'rain'])
-    # add the calculated columns
+	# add the calculated columns
 	metData['runDate'] = pd.to_datetime(metData['year'].astype(str) + " " + metData['dayofYear'].astype(str), format="%Y %j")
 
 	#filter this file based on the dates we are working with
 	metData = metData[(metData['runDate'] >= startDate) & (metData['runDate'] <= endDate)] 
 
-    # this may need to be the thermal time, not just average temp
+	# this may need to be the thermal time, not just average temp
 	metData['avgTemp'] = (metData['maxTemp'] + metData['minTemp']) / 2
 
 	# calculate the Apsim Thermal Time
 	metData['ApsimTT'] = metData.apply(lambda x: linint_3hrly_Temperature(x['maxTemp'], x['minTemp'], xp, fp), axis=1)
 
-    #convert the radiation from MJ/m2/day to Photosynthetically active radiation (PAR)
+    	# convert the radiation from MJ/m2/day to Photosynthetically active radiation (PAR)
 	metData['PARIO'] = metData['radiation'] * 0.47
 
-    #convert the measurement unit for the radiation from MJ/m2/day to J/m2/day
+    	# convert the measurement unit for the radiation from MJ/m2/day to J/m2/day
 	metData['radnJ'] = metData['radiation'] * 1000000
 
 	metData['PQ'] = metData['PARIO'] / metData['avgTemp']
 
-    # calculation the day length
+    	# calculation the day length
 	radians = math.pi/180
 	lambdaRadians = float(latitude) * radians
 
@@ -217,11 +217,11 @@ def read_ApsimWeather(filename, latitude, startDate, endDate):
 	cosLAT = math.cos(lambdaRadians)
 	sinDMC = math.sin(radians * 23.45)
 
-    #print("radians: ", radians)
-    #print("lambdaRadians: ", lambdaRadians)
-    #print("sinLAT: ", sinLAT)
-    #print("cosLAT: ", cosLAT)
-    #print("sinDMC: ", sinDMC)
+	#print("radians: ", radians)
+	#print("lambdaRadians: ", lambdaRadians)
+	#print("sinLAT: ", sinLAT)
+	#print("cosLAT: ", cosLAT)
+	#print("sinDMC: ", sinDMC)
 
 	metData['sinDEC'] = -sinDMC * np.cos(2 * math.pi * (metData['dayofYear'] + 10) / 365)
 	metData['cosDEC'] = np.sqrt(1 - (metData['sinDEC'] * metData['sinDEC']))
@@ -230,7 +230,7 @@ def read_ApsimWeather(filename, latitude, startDate, endDate):
 
 	metData['daylength'] = 12 * (1 + (2 / math.pi) * np.arcsin(metData['a']/metData['b']))
 
-    # calculate the Fraction Disfused Radiation (FDR)
+	# calculate the Fraction Disfused Radiation (FDR)
 	metData['hour'] = np.mod(metData['dayofYear'], 1) * 24
 	metData['sinB'] = metData['a'] + metData['b'] * np.cos(2 * math.pi * (metData['hour'] - 12) / 24)
 	metData['SC'] = 1367 * (1 + 0.033 * np.cos(2 * math.pi * (metData['dayofYear'] - 10) / 365))
@@ -240,17 +240,16 @@ def read_ApsimWeather(filename, latitude, startDate, endDate):
 	metData['Ta'] = metData['radnJ'] / (metData['sinINT'] * 3600 * metData['SC'])
 	metData['FDR'] = metData['Ta'] * -1.6 +1.32
 
-    # calculate the Evapotranspiration
+	# calculate the Evapotranspiration
 	metData['vpsl'] = 238.102 * 17.32491 * ((metData['minTemp'] + metData['maxTemp']) /2) / \
                       (((metData['minTemp'] + metData['maxTemp']) / 2) + 238.102) ** 2
 	metData['ETpt'] = 1.26 * (metData['radnJ']  * (metData['vpsl'] / (metData['vpsl'] \
 					  + 0.067))) / 2454000
 
-    # sort the columns to be a little more logical
+   	# sort the columns to be a little more logical
 	cols=['year', 'dayofYear', 'runDate', 'daylength', 'maxTemp', 'minTemp', 'avgTemp', \
 		  'ApsimTT', 'rain', 'PARIO', 'PQ', 'FDR', 'vpsl', 'ETpt']
 	metData = metData[cols]
-
 
 	return metData
 
@@ -342,12 +341,12 @@ def process_Apsim_dbfile(dbname):
 	dfCombined['cumPhasePARIO'] = dfCombined.groupby(by=['SimID','sowingdate','phases'])['PARIO'].cumsum()
 
 	# need to add the '10_Harvest' phase, but cannot modify categorical data
-    # so need to convert phases to strings
+	# so need to convert phases to strings
 	dfCombined['phases'] = dfCombined['phases'].astype(str)
 	dfCombined.loc[(dfCombined['ZadokStage'] == 90) & (dfCombined['cumPhaseApsimTT'] >= 300 ),'phases'] = '10_Harvest'
 
-	#  only need to keep the first row that is for '10_Harvest', so need to
-    #  identify (flag) those records that need to be kept.
+	# only need to keep the first row that is for '10_Harvest', so need to
+	# identify (flag) those records that need to be kept.
 	dfCombined.loc[dfCombined.groupby(['SimID','sowingdate','phases'])['cumPhaseApsimTT'].idxmin(),'firstHarvest'] = 1
 	dfCombined.loc[(dfCombined['phases'] != '10_Harvest' ),'firstHarvest'] = 1
 	dfCombined['firstHarvest'] = dfCombined.firstHarvest.fillna(0).astype(int)
@@ -358,7 +357,6 @@ def process_Apsim_dbfile(dbname):
 	#now to create the summary output file
 	# -----------------------------------------------------
 
-	#these are the figures for the season
 	dfSummary = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumAvgTemp'].max().reset_index()
 	dfSummary.columns = ['SimID', 'sowingdate', 'phases', 'season_cumAvgTemp']
 
@@ -370,91 +368,95 @@ def process_Apsim_dbfile(dbname):
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'season_cumRain']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-
-	#how many days in each of the phases
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'dayCount']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	#what is the minimimum temperature for the phase
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['minTemp'].min().reset_index()
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	#what is the maximum temperature for the phase
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['maxTemp'].max().reset_index()
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	#what is the average of average temp for the phase
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['avgTemp'].mean().reset_index()
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	#what is the average of average ApsimTT for the phase
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['ApsimTT'].mean().reset_index()
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-
-
-	# geth the values for the last day in each phase 
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseAvgTemp'].max().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumAvgTemp']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseApsimTT'].max().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumApsimTT']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseRain'].max().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumRain']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['WSDR'].mean().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgWSDR']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseETpt'].max().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumETpt']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhasePARIO'].max().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumPARIO']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['PARIO'].mean().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgPARIO']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['FDR'].mean().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgFDR']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['PQ'].mean().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgPQ']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['daylength'].mean().reset_index()
-	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgdaylength']
-	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['runDate'].min().reset_index()
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].min().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'startDate']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['runDate'].max().reset_index()
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].max().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'endDate']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['Biomass'].last().reset_index()
+	# how many days in each of the phases
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].count().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'dayCount']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	# what is the average minimimum temperature for the phase
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['minTemp'].mean().reset_index()
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	# what is the average maximum temperature for the phase
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['maxTemp'].mean().reset_index()
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+
+	# what is the average of average temp for the phase
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['avgTemp'].mean().reset_index()
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	# get the average temp value for the last day in each phase 
+	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['cumPhaseAvgTemp'].last().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumavgTemp']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+
+	# what is the average of average ApsimTT for the phase
+	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['ApsimTT'].mean().reset_index()
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	# get the ApsimTT value for the last day in each phase 
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['cumPhaseApsimTT'].last().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumApsimTT']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	# what average (mean) values are required
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['WSDR'].mean().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgWSDR']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['PARIO'].mean().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgPARIO']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['FDR'].mean().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgFDR']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['PQ'].mean().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgPQ']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['daylength'].mean().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'avgdaylength']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+
+	# what are the values for the last record (day) of each phase  
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['cumPhaseRain'].last().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumRain']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['cumPhaseETpt'].last().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumETpt']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['cumPhasePARIO'].last().reset_index()
+	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'cumPARIO']
+	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
+
+
+	# the following are measurments based on the crop outputs
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['Biomass'].last().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'Biomass']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['LAI'].last().reset_index()
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['LAI'].last().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'LAI']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined.groupby(by=['SimID','sowingdate','phases'])['Yield'].last().reset_index()
+	dfSum = dfCombined.groupby(by=['SimID', 'sowingdate', 'phases'])['Yield'].last().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'Yield']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
-
 
 	# get the counts of various miniumum temperatures
 	dfSum = dfCombined[dfCombined['minTemp'] <= 0].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
@@ -473,34 +475,32 @@ def process_Apsim_dbfile(dbname):
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days<=-3']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-
-	# get the counts of various maximum temperatures
-	dfSum = dfCombined[dfCombined['maxTemp'] >= 30].groupby(by=['SimID','sowingdate', 'phases'])['runDate'].count().reset_index()
+	dfSum = dfCombined[dfCombined['maxTemp'] >= 30].groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].count().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days>=30']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined[dfCombined['maxTemp'] >= 32].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
+	dfSum = dfCombined[dfCombined['maxTemp'] >= 32].groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].count().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days>=32']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined[dfCombined['maxTemp'] >= 34].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
+	dfSum = dfCombined[dfCombined['maxTemp'] >= 34].groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].count().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days>=34']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined[dfCombined['maxTemp'] >= 36].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
+	dfSum = dfCombined[dfCombined['maxTemp'] >= 36].groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].count().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days>=36']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined[dfCombined['maxTemp'] >= 38].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
+	dfSum = dfCombined[dfCombined['maxTemp'] >= 38].groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].count().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days>=38']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
-	dfSum = dfCombined[dfCombined['maxTemp'] >= 40].groupby(by=['SimID','sowingdate','phases'])['runDate'].count().reset_index()
+	dfSum = dfCombined[dfCombined['maxTemp'] >= 40].groupby(by=['SimID', 'sowingdate', 'phases'])['runDate'].count().reset_index()
 	dfSum.columns = ['SimID', 'sowingdate', 'phases', 'days>=40']
 	dfSummary = dfSummary.merge(dfSum, on=['SimID', 'sowingdate', 'phases'], how='left')
 
 
-	#Need to marry back to Simulation details to get cultivar
+	# add back to Simulation details to get longitude, latitude and cultivar details and output the data to a file
 	dfSummary = dfSummary.merge(dfSim, on="SimID", how='left')
 	#cols = dfSummary.columns.values.tolist()
 	#print(cols)
@@ -520,7 +520,7 @@ def process_Apsim_dbfile(dbname):
 	dfSummary.to_csv(outfilename, encoding='utf-8', index=False)
 
 	# to append to the file, need to use mode='a'
-	#newData2.to_csv(filename, encoding='utf-8', index=False, header=False, mode='a')
+	#dfSummary.to_csv(filename, encoding='utf-8', index=False, header=False, mode='a')
 	print("finished at ", datetime.datetime.now())
 
 
