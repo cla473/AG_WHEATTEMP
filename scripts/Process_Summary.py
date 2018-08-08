@@ -14,19 +14,18 @@ sourcedir = "/OSM/CBR/AG_WHEATTEMP/work/output"
 
 
 
-def process_summary_files(filename, filter_phase, filter_year):
+def process_summary_files(filelist, filter_phase, filter_year):
 
-	print("processing file: ", filename)
-	print("started at ", datetime.datetime.now())
-
-	filelist_df = pd.read_csv(filename, header=None)
+    filelist = sourcedir + "/" + filelist
+	filelist_df = pd.read_csv(filelist, header=None)
 	filelist_df.columns=['filename']
 
-	for fname in filelist_df.filename:
-	    print(fname)
+	for filename in filelist_df.filename:
+
+		print("processing file: ", filename)
 
 		#read the file
-		dfData = pd.read_csv(fname)
+		dfData = pd.read_csv(filename)
 
 		#filter and re-format that data as required
 		dfData = dfData[(dfData['phases'] == filter_phase)]
@@ -40,9 +39,10 @@ def process_summary_files(filename, filter_phase, filter_year):
 				'maxTemp', 'avgTemp', 'days>=30', 'days>=32']
 		dfData = dfData[cols]
 
-		dfData.rename(columns={'days>=30': 'daysGreaterEqual30', 'days>=32': 'daysGreaterEqual32'}, inplace=True)
+		dfData.rename(columns={'days>=30': 'daysGTE30', \
+							   'days>=32': 'daysGTE32'}, inplace=True)
 
-		#creath the output filename
+		#create the output filename
 		outfile = sourcedir + "/" + filter_phase + "_" + str(filter_year) + ".csv"
 
 		#output the data to a new file, if it doesn't exists, or append if it does
@@ -52,21 +52,28 @@ def process_summary_files(filename, filter_phase, filter_year):
 			dfData.to_csv(outfile, header=False, mode='a', encoding='utf-8', index=False)
 
 
-	print("finished at ", datetime.datetime.now())
 
 
 
 def main(args):
 	parser = argparse.ArgumentParser(description="Processes Summary files")
-	parser.add_argument("-f", "--filename", help="The list of files to proces.")
-	parser.add_argument("-p", "--phase", help="The phase to filter the data by (ie, '07_GrainFilling').")
-	parser.add_argument("-y", "--year", help="The year to filter the data by (between 1957 and 2017').")
+	parser.add_argument("-f", "--filename", default="filelist.txt" \
+						help="The name of the file containing the list of files to proces.")
+	parser.add_argument("-p", "--phase", default="07_GrainFilling" \
+						help="The phase to filter the data by (ie, '07_GrainFilling').")
+	parser.add_argument("-y", "--year", default="1958" \
+						help="The year to filter the data by (between 1957 and 2017').")
 
 	args = parser.parse_args()
-    filename = args.filename
+    filelist = args.filename
 	fphase = args.phase
     fyear = args.year
-	process_summary_files(filename, fphase, fyear)
+
+	print("process started at ", datetime.datetime.now())
+
+	process_summary_files(filelist, fphase, fyear)
+
+	print("finished at ", datetime.datetime.now())
 
 
 
