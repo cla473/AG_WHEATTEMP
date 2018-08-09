@@ -16,13 +16,13 @@ sourcedir = "/OSM/CBR/AG_WHEATTEMP/work/output"
 
 def process_summary_files(filelist, filter_phase, filter_year):
 
-    filelist = sourcedir + "/" + filelist
+	filelist = sourcedir + "/" + filelist
 	filelist_df = pd.read_csv(filelist, header=None)
 	filelist_df.columns=['filename']
 
 	for filename in filelist_df.filename:
 
-		print("processing file: ", filename)
+		#print("processing file: ", filename)
 
 		#read the file
 		dfData = pd.read_csv(filename)
@@ -32,7 +32,7 @@ def process_summary_files(filelist, filter_phase, filter_year):
 		dfData['sowingdate'] = pd.to_datetime(dfData['sowingdate'], format="%Y-%m-%d")
 		dfData['year'] = dfData['sowingdate'].dt.year
 		dfData['sowdate'] = dfData['sowingdate'].dt.strftime("%d-%B")
-		dfData = dfData[(dfData['year'] == filter_year)]
+		dfData = dfData[(dfData['year'] == int(filter_year))]
 
 		#get rid of the columns we don't want, and rename the 'dodgy' names
 		cols = ['SimID', 'variety', 'long', 'lat', 'sowdate', 'phases', 'dayCount', \
@@ -57,17 +57,17 @@ def process_summary_files(filelist, filter_phase, filter_year):
 
 def main(args):
 	parser = argparse.ArgumentParser(description="Processes Summary files")
-	parser.add_argument("-f", "--filename", default="filelist.txt" \
+	parser.add_argument("-f", "--filename", default="filelist.txt",
 						help="The name of the file containing the list of files to proces.")
-	parser.add_argument("-p", "--phase", default="07_GrainFilling" \
+	parser.add_argument("-p", "--phase", default="07_GrainFilling",
 						help="The phase to filter the data by (ie, '07_GrainFilling').")
-	parser.add_argument("-y", "--year", default="1958" \
+	parser.add_argument("-y", "--year", default="1958",
 						help="The year to filter the data by (between 1957 and 2017').")
 
 	args = parser.parse_args()
-    filelist = args.filename
+	filelist = args.filename
 	fphase = args.phase
-    fyear = args.year
+	fyear = args.year
 
 	print("process started at ", datetime.datetime.now())
 
