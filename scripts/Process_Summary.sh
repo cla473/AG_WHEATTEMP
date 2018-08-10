@@ -1,19 +1,19 @@
 #!/bin/bash
 #SBATCH --time=2:0:0
 #SBATCH --mem=4gb
-#SBATCH --job-name=zadoc
+#SBATCH --job-name=stan
 
 module load parallel python/3.6.1
 
-if [! -z "$SLURM_ARRAY_TASK_ID" ]
+if [ ! -z "$SLURM_ARRAY_TASK_ID" ]
 then
-	i = $SLURM_ARRAY_TASK_ID
-    ./Apsim_ProcessPhases.py -f "filelist.txt"  -p "07_GrainFilling" -y $i
-done
+	i=$SLURM_ARRAY_TASK_ID
+    ./Process_Summary.py -f "filelist.txt"  -p "07_GrainFilling" -y $i
+fi
 
 
 #Sample Usage:
-#  sbatch -a 1957-2016 Process_Phases.sh
+#  sbatch -a 1957-2016 Process_Summary.sh
 
 
 

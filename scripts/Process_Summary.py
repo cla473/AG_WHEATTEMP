@@ -43,7 +43,7 @@ def process_summary_files(filelist, filter_phase, filter_year):
 							   'days>=32': 'daysGTE32'}, inplace=True)
 
 		#create the output filename
-		outfile = sourcedir + "/" + filter_phase + "_" + str(filter_year) + ".csv"
+		outfile = sourcedir + "/grainfilling/" + filter_phase + "_" + str(filter_year) + ".csv"
 
 		#output the data to a new file, if it doesn't exists, or append if it does
 		if not os.path.isfile(outfile):
