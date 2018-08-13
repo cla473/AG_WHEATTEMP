@@ -74,7 +74,7 @@ def get_simulation_details(dbname):
 def get_variety_sowdate_for_location(long, lat):
 
 	longfloat = float(long)
-	latfloat = float(lat)
+	latfloat = abs(float(lat))
 
 	if longfloat <= 129:
 		#this is Western Australia
