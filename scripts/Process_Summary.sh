@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --time=2:0:0
+#SBATCH --time=6:0:0
 #SBATCH --mem=4gb
 #SBATCH --job-name=stan
 
-module load parallel python/3.6.1
+module load python/3.6.1
 
 if [ ! -z "$SLURM_ARRAY_TASK_ID" ]
 then
