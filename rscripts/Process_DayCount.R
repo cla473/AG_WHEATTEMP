@@ -4,7 +4,7 @@
 # Generates a graph showing the values specified as a heat map on the map of Australia
 #----------------------------------------------------------------------------------
 # Sample Usage:
-#     Rscript Process_MaxTemp.R -y 2014 
+#     Rscript Process_DayCount.R -y 2014 
 #----------------------------------------------------------------------------------
 #rm(list =ls())
 library("optparse")
@@ -28,10 +28,10 @@ if (is.null(opt$year)){
     stop("At least one argument must be supplied (input file).n", call.=FALSE)
 }
 year <- opt$year
-
+#year <- 2016
 source_data_dir <- "/OSM/CBR/AG_WHEATTEMP/work/output/grainfilling/"
 source_shapefile_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
-output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/maxTemp/"
+output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/dayCount/"
 
 
 #Retrieve the Region Shape File
@@ -49,7 +49,7 @@ as.tibble(aus_mapped)
 #need to do this as there is no CRS information with the AUS shape files
 st_crs(aus_mapped) <- st_crs(regions_mapped)
 
-#year <- 2016
+
 #Retrieve the data for the specified year
 datafile <- paste0(source_data_dir, "07_GrainFilling_", year, ".csv")
 all_df <- read_csv(datafile)
@@ -74,6 +74,22 @@ pcheck <- as.data.frame(pcheck)
 points_sf$InRegion <- pcheck
 points_sf <- points_sf[points_sf$InRegion==TRUE,]
 
+#theme_bare <- theme(
+#    axis.line = element_blank(),
+#    axis.text.x = element_blank(),
+#    axis.text.y = element_blank(),
+#    axis.title.x = element_blank(),
+#    axis.title.y = element_blank(),
+#    axis.ticks = element_blank(),
+#    panel.background = element_rect(fill="white"),
+#    panel.border = element_blank(),
+#    panel.grid.major = element_blank(),
+#    panel.grid.minor = element_blank(),
+#    panel.spacing = unit(c(0,0,0,0), "lines"),
+#    plot.background = element_rect(fill="white"),
+#    plot.margin = unit(c(0,0,0,0), "lines")
+#)
+
 #now map only this points that are within the regions, on the map of Australia ()
 #ggplot() + 
 #    geom_sf(data = aus_mapped) +
@@ -82,24 +98,26 @@ points_sf <- points_sf[points_sf$InRegion==TRUE,]
 #    scale_fill_continuous(low="#56B1F7", high="#132B43")
 #    ggtitle("Australia")
 
-#minVal <- round(min(all_df$maxTemp), 0) - 2
-#maxVal <- round(max(all_df$maxTemp), 0) + 2
+minVal <- round(min(all_df$dayCount), 0) - 2
+maxVal <- round(max(all_df$dayCount), 0) + 2
 
 #maxdf <- all_df[all_df$maxTemp >= 30,]
 #mindf <- all_df[all_df$maxTemp <= 19,]
 
 #colPal <- colorRampPalette(rev(brewer.pal(9, "RdYlBu")))(maxVal-minVal)
-colPal <- colorRampPalette(rev(brewer.pal(9, "RdYlBu"))) (35)
-chtTitle <- paste0("Average Maximum Temperature \nWheat Grain Filling Period")
+colPal <- colorRampPalette(brewer.pal(9, "Blues")) (60)
+#chtTitle <- paste0("Average Maximum Temperature \nWheat Grain Filling Period")
 
 ggplot() + 
     geom_sf(data = aus_mapped) +
-    geom_sf(data = points_sf, aes(colour=maxTemp), alpha=0.7, show.legend = "point") +
-    scale_colour_gradientn(colours=colPal, limits=c(15, 35)) +
+    geom_sf(data = points_sf, aes(colour=dayCount), alpha=0.7, show.legend = "point") +
+    scale_colour_gradientn(colours=colPal, limits=c(0,60)) +
     coord_sf(xlim=c(112, 156), ylim=c(-10, -45)) +
     labs(x="long", y="lat") +
     theme_bw()
     
+
+
 outfile <- paste0(output_dir, "map_", year, ".png")
 print(outfile)
 #ggsave(outfile, width = 16, height = 9, dpi = 100)
