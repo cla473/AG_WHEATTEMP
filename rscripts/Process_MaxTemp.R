@@ -113,7 +113,7 @@ ggplot() +
     geom_sf(data = points_sf, aes(colour=maxTemp), alpha=0.7, show.legend = "point") +
     scale_colour_gradientn(colours=colPal) +
     coord_sf(xlim=c(112, 156), ylim=c(-10, -45)) +
-    labs(x="long", y="lat", title=chtTitle) +
+    labs(x="long", y="lat") +
     theme_bw()
     
 
