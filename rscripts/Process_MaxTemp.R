@@ -13,6 +13,7 @@ library("tidyverse")
 library("viridis")
 library("rvest")
 library("ggplot2")
+library("RColorBrewer")
 
 option_list = list(
     make_option(c("-y", "--year"), type="integer", default=2016, 
@@ -27,7 +28,7 @@ if (is.null(opt$year)){
     stop("At least one argument must be supplied (input file).n", call.=FALSE)
 }
 year <- opt$year
-
+#year <- 2016
 source_data_dir <- "/OSM/CBR/AG_WHEATTEMP/work/output/grainfilling/"
 source_shapefile_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
 output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/maxTemp/"
@@ -73,21 +74,21 @@ pcheck <- as.data.frame(pcheck)
 points_sf$InRegion <- pcheck
 points_sf <- points_sf[points_sf$InRegion==TRUE,]
 
-theme_bare <- theme(
-    axis.line = element_blank(),
-    axis.text.x = element_blank(),
-    axis.text.y = element_blank(),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    axis.ticks = element_blank(),
-    panel.background = element_rect(fill="white"),
-    panel.border = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.spacing = unit(c(0,0,0,0), "lines"),
-    plot.background = element_rect(fill="white"),
-    plot.margin = unit(c(0,0,0,0), "lines")
-)
+#theme_bare <- theme(
+#    axis.line = element_blank(),
+#    axis.text.x = element_blank(),
+#    axis.text.y = element_blank(),
+#    axis.title.x = element_blank(),
+#    axis.title.y = element_blank(),
+#    axis.ticks = element_blank(),
+#    panel.background = element_rect(fill="white"),
+#    panel.border = element_blank(),
+#    panel.grid.major = element_blank(),
+#    panel.grid.minor = element_blank(),
+#    panel.spacing = unit(c(0,0,0,0), "lines"),
+#    plot.background = element_rect(fill="white"),
+#    plot.margin = unit(c(0,0,0,0), "lines")
+#)
 
 #now map only this points that are within the regions, on the map of Australia ()
 #ggplot() + 
@@ -97,16 +98,25 @@ theme_bare <- theme(
 #    scale_fill_continuous(low="#56B1F7", high="#132B43")
 #    ggtitle("Australia")
 
+#minVal <- round(min(all_df$maxTemp), 0) - 2
+#maxVal <- round(max(all_df$maxTemp), 0) + 2
+
+#maxdf <- all_df[all_df$maxTemp >= 30,]
+#mindf <- all_df[all_df$maxTemp <= 19,]
+
+#colPal <- colorRampPalette(rev(brewer.pal(9, "RdYlBu")))(maxVal-minVal)
+colPal <- colorRampPalette(rev(brewer.pal(9, "RdYlBu"))) (35)
+chtTitle <- paste0("Average Maximum Temperature \nWheat Grain Filling Period")
 
 ggplot() + 
     geom_sf(data = aus_mapped) +
     geom_sf(data = points_sf, aes(colour=maxTemp), alpha=0.7, show.legend = "point") +
-    scale_colour_gradientn(colours=rainbow(7), limits=c(20, 45)) +
+    scale_colour_gradientn(colours=colPal) +
     coord_sf(xlim=c(112, 156), ylim=c(-10, -45)) +
-    theme_bare +
-    ggtitle("Australia")
+    labs(x="long", y="lat", title=chtTitle) +
+    theme_bw()
     
-    
+
 
 outfile <- paste0(output_dir, "map_", year, ".png")
 print(outfile)
