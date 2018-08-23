@@ -102,6 +102,5 @@ ggplot() +
     
 outfile <- paste0(output_dir, "map_", year, ".png")
 print(outfile)
-#ggsave(outfile, width = 16, height = 9, dpi = 100)
 ggsave(outfile, width=7, height=6, units="in")
 
