@@ -4,7 +4,7 @@
 # Generates a graph showing the values specified as a heat map on the map of Australia
 #----------------------------------------------------------------------------------
 # Sample Usage:
-#     Rscript Process_DayCount.R -y 2014 
+#     Rscript Process_DaysGTE32.R -y 2014 
 #----------------------------------------------------------------------------------
 #rm(list =ls())
 library("optparse")
@@ -31,7 +31,7 @@ year <- opt$year
 #year <- 2016
 source_data_dir <- "/OSM/CBR/AG_WHEATTEMP/work/output/grainfilling/"
 source_shapefile_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
-output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/dayCount/"
+output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/daysGTE32/"
 
 
 #Retrieve the Region Shape File
@@ -54,6 +54,13 @@ st_crs(aus_mapped) <- st_crs(regions_mapped)
 datafile <- paste0(source_data_dir, "07_GrainFilling_", year, ".csv")
 all_df <- read_csv(datafile)
 
+all_df <- all_df %>% 
+    drop_na(daysGTE32)
+
+minVal <- min(all_df$daysGTE32)
+maxVal <- max(all_df$daysGTE32)
+
+
 #get the coordintaes and format as SpatialPoints
 coords <- select(all_df, long, lat)
 #points_sp <- SpatialPoints(coords=coords, proj4string = CRS("+proj=longlat +ellps=GRS80 +no_defs"))
@@ -74,23 +81,13 @@ pcheck <- as.data.frame(pcheck)
 points_sf$InRegion <- pcheck
 points_sf <- points_sf[points_sf$InRegion==TRUE,]
 
-minVal <- round(min(all_df$dayCount), 0)
-maxVal <- round(max(all_df$dayCount), 0)
-
-maxdf <- points_sf[points_sf$dayCount >= 50,]
-#mindf <- all_df[all_df$maxTemp <= 19,]
-
-#eliminate those less than 15
-points_sf <- points_sf[points_sf$dayCount >= 15,]
-
-#colPal <- colorRampPalette(rev(brewer.pal(9, "RdYlBu")))(maxVal-minVal)
-colPal <- colorRampPalette(brewer.pal(9, "YlGnBu")) (45)
-#chtTitle <- paste0("Average Maximum Temperature \nWheat Grain Filling Period")
+#now create the colour palette to use (take original 9 colours and make 15)
+colPal <- colorRampPalette(brewer.pal(9, "YlGnBu")) (15)
 
 ggplot() + 
     geom_sf(data = aus_mapped) +
-    geom_sf(data = points_sf, aes(colour=dayCount), alpha=0.7, show.legend = "point") +
-    scale_colour_gradientn(colours=colPal, limits=c(15,60)) +
+    geom_sf(data = points_sf, aes(colour=daysGTE32), alpha=0.7, show.legend = "point") +
+    scale_colour_gradientn(colours=colPal, limits=c(0,16)) +
     coord_sf(xlim=c(112, 156), ylim=c(-10, -45)) +
     labs(x="long", y="lat") +
     theme_bw()

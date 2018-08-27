@@ -54,6 +54,13 @@ st_crs(aus_mapped) <- st_crs(regions_mapped)
 datafile <- paste0(source_data_dir, "07_GrainFilling_", year, ".csv")
 all_df <- read_csv(datafile)
 
+maxDayCount <- max(all_df$dayCount)
+minDayCount <- min(all_df$dayCount)
+
+#eliminate any rows where day count <= 15
+#all_df2 <- all_df[all_df$dayCount <= 16,]
+all_df <- all_df[all_df$dayCount > 15,]
+
 #get the coordintaes and format as SpatialPoints
 coords <- select(all_df, long, lat)
 #points_sp <- SpatialPoints(coords=coords, proj4string = CRS("+proj=longlat +ellps=GRS80 +no_defs"))
@@ -74,17 +81,8 @@ pcheck <- as.data.frame(pcheck)
 points_sf$InRegion <- pcheck
 points_sf <- points_sf[points_sf$InRegion==TRUE,]
 
-minVal <- round(min(all_df$dayCount), 0)
-maxVal <- round(max(all_df$dayCount), 0)
-
-maxdf <- points_sf[points_sf$dayCount >= 50,]
-#mindf <- all_df[all_df$maxTemp <= 19,]
-
-#eliminate those less than 15
-points_sf <- points_sf[points_sf$dayCount >= 15,]
-
 #colPal <- colorRampPalette(rev(brewer.pal(9, "RdYlBu")))(maxVal-minVal)
-colPal <- colorRampPalette(brewer.pal(9, "YlGnBu")) (45)
+colPal <- colorRampPalette(brewer.pal(9, "PuBuGn")) (45)
 #chtTitle <- paste0("Average Maximum Temperature \nWheat Grain Filling Period")
 
 ggplot() + 
@@ -95,7 +93,6 @@ ggplot() +
     labs(x="long", y="lat") +
     theme_bw()
     
-
 
 outfile <- paste0(output_dir, "map_", year, ".png")
 print(outfile)
