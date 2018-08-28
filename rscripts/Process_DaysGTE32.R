@@ -28,7 +28,7 @@ if (is.null(opt$year)){
     stop("At least one argument must be supplied (input file).n", call.=FALSE)
 }
 year <- opt$year
-#year <- 2016
+#year <- 2009
 source_data_dir <- "/OSM/CBR/AG_WHEATTEMP/work/output/grainfilling/"
 source_shapefile_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
 output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/daysGTE32/"
@@ -82,12 +82,12 @@ points_sf$InRegion <- pcheck
 points_sf <- points_sf[points_sf$InRegion==TRUE,]
 
 #now create the colour palette to use (take original 9 colours and make 15)
-colPal <- colorRampPalette(brewer.pal(9, "YlGnBu")) (15)
+colPal <- colorRampPalette(brewer.pal(9, "YlGnBu")) (21)
 
 ggplot() + 
     geom_sf(data = aus_mapped) +
     geom_sf(data = points_sf, aes(colour=daysGTE32), alpha=0.7, show.legend = "point") +
-    scale_colour_gradientn(colours=colPal, limits=c(0,16)) +
+    scale_colour_gradientn(colours=colPal, limits=c(0,21)) +
     coord_sf(xlim=c(112, 156), ylim=c(-10, -45)) +
     labs(x="long", y="lat") +
     theme_bw()
