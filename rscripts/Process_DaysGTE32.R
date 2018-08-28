@@ -31,7 +31,7 @@ year <- opt$year
 #year <- 2009
 source_data_dir <- "/OSM/CBR/AG_WHEATTEMP/work/output/grainfilling/"
 source_shapefile_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
-output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/daysGTE32/"
+output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/shiny/GrainFilling/www/daysGTE32/"
 
 
 #Retrieve the Region Shape File
@@ -58,7 +58,7 @@ all_df <- all_df %>%
     drop_na(daysGTE32)
 
 minVal <- min(all_df$daysGTE32)
-maxVal <- max(all_df$daysGTE32)
+maxVal <- max(all_df$daysGTE32) 
 
 
 #get the coordintaes and format as SpatialPoints
