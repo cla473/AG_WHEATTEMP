@@ -28,7 +28,7 @@ if (is.null(opt$year)){
     stop("At least one argument must be supplied (input file).n", call.=FALSE)
 }
 year <- opt$year
-#year <- 2016
+#year <- 2009
 source_data_dir <- "/OSM/CBR/AG_WHEATTEMP/work/output/grainfilling/"
 source_shapefile_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
 output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/dayCount/"
