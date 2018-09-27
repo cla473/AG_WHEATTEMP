@@ -1,5 +1,3 @@
-#!/usr/bin/env Rscript
-
 #----------------------------------------------------------------------------------
 # Generates a graph showing the values specified as a heat map on the map of Australia
 #----------------------------------------------------------------------------------
@@ -20,40 +18,84 @@ library("ggplot2")
 source_dir <- "/OSM/CBR/AG_WHEATTEMP/work/ApsimNG-test/APSIM_run/apsimx"
 output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/ApsimNG/"
 source_data_dir <- "/OSM/CBR/AG_WHEATTEMP/work/output/grainfilling/"
-source_shapefile_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
-source_shapefile_dir_new <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/GRDC_Regions NEW_region/"
-source_shapefile_dir_SA2 <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/Subregions_provisional_2015-11-03/"
+source_GIS_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
 year <- 2009
 
 #----------------------------------------------------------------------
 # Retrieve the shape files
 #----------------------------------------------------------------------
+#Retrieve the Australia shape file
+shapefile <- paste0(source_GIS_dir, "states/aust_cd66states.shp")
+print(paste0("filename: ", shapefile))
+aus_mapped <- st_read(shapefile, quiet = TRUE)
+as.tibble(aus_mapped)
+
+ggplot() + 
+    geom_sf(data = aus_mapped)
+
+#------------------
 #Retrieve the Region Shape File
-regionfile <- paste0(source_shapefile_dir, "wheat_22regions_KC.shp")
-print(paste0("region file: ", regionfile))
-regions_mapped <- st_read(regionfile, quiet = TRUE)
+shapefile <- paste0(source_GIS_dir, "wheat_22regions_KC/wheat_22regions_KC.shp")
+print(paste0("region file: ", shapefile))
+regions_mapped <- st_read(shapefile, quiet = TRUE)
 as.tibble(regions_mapped)
 
-#Retrieve the Region Shape File
-newRegionfile <- paste0(source_shapefile_dir_new, "GRDC_Regions NEW_region.shp")
-print(paste0("region file: ", newRegionfile))
-file.exists(newRegionfile)
-newRegions_mapped <- st_read(newRegionfile, quiet = TRUE)
+ggplot() + 
+    geom_sf(data = regions_mapped)
+
+st_crs(aus_mapped) <- st_crs(regions_mapped)
+ggplot() + 
+    geom_sf(data = aus_mapped) +
+    geom_sf(data = regions_mapped, aes(fill=Australia1)) +
+    labs(x="long", y="lat", title="Original 22 GRDC Wheat Regions")
+
+#------------------
+shapefile <- paste0(source_GIS_dir, "GRDC_Regions/GRDC_Regions.shp")
+print(paste0("region file: ", shapefile))
+GRDCregions_mapped <- st_read(shapefile, quiet = TRUE)
+as.tibble(GRDCregions_mapped)
+
+ggplot() + 
+    geom_sf(data = GRDCregions_mapped)
+
+ggplot() + 
+    geom_sf(data = aus_mapped) +
+    geom_sf(data = GRDCregions_mapped, aes(fill=AGECO_ZONE)) +
+    labs(x="long", y="lat", title="Ageco Zones")
+
+ggplot() + 
+    geom_sf(data = aus_mapped) +
+    geom_sf(data = GRDCregions_mapped, aes(fill=REGION)) +
+    labs(x="long", y="lat", title="Ageco Zones as 3 Regions")
+
+
+
+#------------------
+#Retrieve the Region Shape File (this is from David Gobbett)
+shapefile <- paste0(source_GIS_dir, "GRDC_Regions NEW_region/GRDC_Regions NEW_region.shp")
+print(paste0("region file: ", shapefile))
+file.exists(shapefile)
+newRegions_mapped <- st_read(shapefile, quiet = TRUE)
 as.tibble(newRegions_mapped)
 
+ggplot() + 
+    geom_sf(data = aus_mapped) +
+    geom_sf(data = newRegions_mapped[newRegions_mapped$Region != "Excluded",], aes(fill=Region)) +
+    labs(x="long", y="lat", title="New 3 Area Regions")
+
+
 #these are the provisional GRDC (SA2) regions (Prepared by David Gobbett 2015)
-SA2Regionfile <- paste0(source_shapefile_dir_SA2, "Draft_GRDC_Subregions_2015.shp")
-print(paste0("region file: ", SA2Regionfile))
-file.exists(SA2Regionfile)
-SA2Regions_mapped <- st_read(SA2Regionfile, quiet = TRUE)
+shapefile <- paste0(source_GIS_dir, "Draft_GRDC_Subregions_2015/Draft_GRDC_Subregions_2015.shp")
+print(paste0("region file: ", shapefile))
+SA2Regions_mapped <- st_read(shapefile, quiet = TRUE)
 as.tibble(SA2Regions_mapped)
 str(SA2Regions_mapped)
 
-#Retrieve the Australia shape file
-australiafile <- paste0(source_shapefile_dir, "states/aust_cd66states.shp")
-aus_mapped <- st_read(australiafile, quiet = TRUE)
-as.tibble(aus_mapped)
-st_crs(aus_mapped) <- st_crs(regions_mapped)
+ggplot() + 
+    geom_sf(data = aus_mapped) +
+    geom_sf(data = SA2Regions_mapped) +
+    labs(x="long", y="lat", title="Draft GRDC SubRegions 2015")
+
 
 #----------------------------------------------------------------------
 # Get the full list of Points
