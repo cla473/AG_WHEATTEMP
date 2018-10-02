@@ -16,7 +16,7 @@ library("ggplot2")
 # Define the file locations and other variables
 #----------------------------------------------------------------------
 source_dir <- "/OSM/CBR/AG_WHEATTEMP/work/ApsimNG-test/APSIM_run/apsimx"
-output_dir <- "/OSM/CBR/AG_WHEATTEMP/work/ApsimNG/"
+ <- "/OSM/CBR/AG_WHEATTEMP/work/ApsimNG/"
 source_data_dir <- "/OSM/CBR/AG_WHEATTEMP/work/output/grainfilling/"
 source_GIS_dir <- "/OSM/CBR/AG_WHEATTEMP/work/GIS_data/"
 year <- 2009
@@ -72,16 +72,16 @@ ggplot() +
 
 #------------------
 #Retrieve the Region Shape File (this is from David Gobbett)
-shapefile <- paste0(source_GIS_dir, "GRDC_Regions NEW_region/GRDC_Regions NEW_region.shp")
-print(paste0("region file: ", shapefile))
-file.exists(shapefile)
-newRegions_mapped <- st_read(shapefile, quiet = TRUE)
-as.tibble(newRegions_mapped)
+#shapefile <- paste0(source_GIS_dir, "GRDC_Regions NEW_region/GRDC_Regions NEW_region.shp")
+#print(paste0("region file: ", shapefile))
+#file.exists(shapefile)
+#newRegions_mapped <- st_read(shapefile, quiet = TRUE)
+#as.tibble(newRegions_mapped)
 
-ggplot() + 
-    geom_sf(data = aus_mapped) +
-    geom_sf(data = newRegions_mapped[newRegions_mapped$Region != "Excluded",], aes(fill=Region)) +
-    labs(x="long", y="lat", title="New 3 Area Regions")
+#ggplot() + 
+#    geom_sf(data = aus_mapped) +
+#    geom_sf(data = newRegions_mapped[newRegions_mapped$Region != "Excluded",], aes(fill=Region)) +
+#    labs(x="long", y="lat", title="New 3 Area Regions")
 
 
 #these are the provisional GRDC (SA2) regions (Prepared by David Gobbett 2015)
@@ -93,7 +93,7 @@ str(SA2Regions_mapped)
 
 ggplot() + 
     geom_sf(data = aus_mapped) +
-    geom_sf(data = SA2Regions_mapped) +
+    geom_sf(data = SA2Regions_mapped, aes(fill=GRDC_Subre)) +
     labs(x="long", y="lat", title="Draft GRDC SubRegions 2015")
 
 
@@ -127,7 +127,8 @@ table(allLocsDF$Status)
 allLocsDF$InRegion <- "False"
 
 #now show where the points are
-allLocsDF_points_sf <- st_as_sf(allLocsDF, coords = c("long", "lat"), crs = 4326)
+#allLocsDF_points_sf <- st_as_sf(allLocsDF, coords = c("long", "lat"), crs = 4326)
+allLocsDF_points_sf <- st_as_sf(allLocationsDF, coords = c("long", "lat"), crs = 4326)
 st_geometry(allLocsDF_points_sf)
 st_crs(allLocsDF_points_sf) <- st_crs(regions_mapped)
 
@@ -252,6 +253,23 @@ allLocsDF_points_sf$SA2Regions <- pcheck
 allLocsDF_points_sf$InSA2Regions <- "False"
 allLocsDF_points_sf$InSA2Regions[allLocsDF_points_sf$SA2Regions == TRUE] <- "True"
 table(allLocsDF_points_sf$InSA2Regions)
+
+#-----------------------------------------------------------------
+# here we need to filter out those points that are False, 
+# and then save the long and lat values to a csv file
+#-----------------------------------------------------------------
+DraftRegions <- allLocsDF_points_sf[allLocsDF_points_sf$SA2Regions == TRUE,]
+#allLocationsDF <- as.data.frame(filenames) 
+#head(allLocationsDF)
+DraftRegions$long <- as.numeric(substring(DraftRegions$filenames, 1, 6))
+DraftRegions$lat <- as.numeric(substring(DraftRegions$filenames, 7, 12))
+outputDetails <- DraftRegions %>% st_set_geometry(NULL)
+class(outputDetails)
+head(outputDetails)
+outfile <- paste0(output_dir, "LocationsList_Draft_GRDC_Subregions.csv")
+print(outfile)
+write.csv(outputDetails, file=outfile)
+#-----------------------------------------------------------------
 
 allLocsDF_points_sf$InSA2Regions <- as.factor(allLocsDF_points_sf$InSA2Regions)
 print(levels(allLocsDF_points_sf$InSA2Regions))
