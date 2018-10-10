@@ -1,0 +1,7 @@
+5
+ion: /sys/kernel/mm/transparent_hugepage/enabled is set to always instead of madvise. This will gravely effect the performance of Parallel.
+parallel: reading inputs from standard input
+./getMetData_netCDF4.py:111: UserWarning: Warning: converting a masked element to nan.
+  if  math.isnan(tav) == True:
+./getMetData_netCDF4.py:111: UserWarning: Warning: converting a masked element to nan.
+  if  math.isnan(tav) == True:
