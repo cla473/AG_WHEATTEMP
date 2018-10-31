@@ -1,0 +1,2 @@
+ion: /sys/kernel/mm/transparent_hugepage/enabled is set to always instead of madvise. This will gravely effect the performance of Parallel.
+parallel: reading inputs from standard input

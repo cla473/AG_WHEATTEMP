@@ -1,0 +1,6 @@
+1
+2
+/OSM/CBR/AG_WHEATTEMP/work/ApsimNG-LC/met/metList.csv
+/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/modifiedMet
+ion: /sys/kernel/mm/transparent_hugepage/enabled is set to always instead of madvise. This will gravely effect the performance of Parallel.
+parallel: reading inputs from standard input
