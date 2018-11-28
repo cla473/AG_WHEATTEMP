@@ -1,0 +1,589 @@
+<?xml version="1.0" ?>
+<CultivarFolder>
+  <!--List of Genotypes with Phenology setting provided by Bangyou Zheng -->
+  <Cultivar>
+    <Name>Agtscythe</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.7</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.7</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Annuello</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.6</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Axe</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.9</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.7</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 130</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Banks</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 8</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 100</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Baxter</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 8</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 2.5</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 3.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 90</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Bolac</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.1</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.4</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Bonnie_rock</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 5.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.1</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Bounty</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.8</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 2.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Braewood</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 2.7</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.9</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Camm</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.3</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.9</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Catalina</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.1</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 130</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Champtal</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.2</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 4.2</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Cobra</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 4.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 90</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Corack</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.6</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.9</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 110</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Crusader</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.6</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.2</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 130</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Csiro_w7A</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.8</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Csiro_w8A</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 8</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 2.4</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 120</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Cunderdin</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 5.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.8</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 130</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Currawong</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 3.3</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 2.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Dart</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 110</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>EGAGregory</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.9</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.3</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>EGAWylie</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.1</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Emurock</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.1</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Excalibur</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.9</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.8</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Fortune</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.3</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.7</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Gauntlet</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.7</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.8</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Gladius</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.3</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.1</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Gutha</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.8</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>H46</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 8</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.2</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 90</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Halberd</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.6</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.1</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Hartog</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.7</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 120</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Impala</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.4</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>ImposeCLPlus</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 100</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Janz</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.8</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>JusticaCLPlus</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 8</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 110</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Kennedy</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>King_Rock</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.9</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 110</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Kunjin</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 3.9</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Lincoln</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.3</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.9</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Mace</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.5</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.8</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Machete</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 3.9</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Magenta</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.6</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Merlin</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 8</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 100</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Osprey</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.5</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.8</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Oxley</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.9</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.8</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Reeves</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 5.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.7</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Scout</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 2.2</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.9</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Sentinel</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 2.1</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 2.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Shield</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 9</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 3.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.7</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 90</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Silverstar</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 110</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Spitfire</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.2</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Strzelecki</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 9</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 3.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 3.7</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 90</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Sunco</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 8</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.3</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 2.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 100</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Sunlin</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 0.5</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 2.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Sunstate</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.1</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.4</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 130</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Suntop</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 8</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 2.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.1</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 110</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Thornbill</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.5</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 2.7</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Wedgetail</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.8</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 2.0</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Wentworth</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 7</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.7</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.4</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Westonia</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.1</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.6</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Whistler</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.8</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.1</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Wyalkatchem</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.0</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.5</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Wylah</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 4.9</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 3.9</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 120</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Yandanooka</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.9</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 0.4</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 150</Command>
+  </Cultivar>
+  <Cultivar>
+    <Name>Yitpi</Name>
+    <IncludeInDocumentation>true</IncludeInDocumentation>
+    <Enabled>true</Enabled>
+    <Command>[Phenology].MinimumLeafNumber.FixedValue = 6</Command>
+    <Command>[Phenology].VrnSensitivity.FixedValue = 1.8</Command>
+    <Command>[Phenology].PpSensitivity.FixedValue = 1.9</Command>
+    <Command>[Structure].Phyllochron.BasePhyllochron.FixedValue = 140</Command>
+  </Cultivar>
+</CultivarFolder>
