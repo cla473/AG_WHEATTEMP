@@ -17,12 +17,16 @@ par_generate <- function(i, metFileList) {
     filename <- metFileList[i]
     metData <- read_csv(metFileList[i])
     metData2 <- metData %>% 
-        mutate(VPD = 0.75 * 610.7 * exp(17.4 * maxTemp/(239 + maxTemp))/1000 + 0.25 * 610.7 * exp(17.4 * minTemp/(239 + minTemp))/1000 - vp/10) %>% 
+        mutate(VPDMax = 610.7 * exp(17.4 * maxTemp/(239 + maxTemp))/1000 - vp/10,
+               VPDMin = 610.7 * exp(17.4 * minTemp/(239 + minTemp))/1000 - vp/10,
+               VPDFrac = 0.66) %>%
+        mutate(VPD = VPDMax * VPDFrac - VPDMin * (1-VPDFrac)) %>% 
         mutate(PQday = PARIO/avgTemp,
                PQvpdday = PARIO/(avgTemp * VPD),
                PQvpdfdrday = (PARIO * FDR)/(avgTemp * VPD)) %>% 
-        select(year, dayofYear, runDate, maxTemp, minTemp, avgTemp, daylength, ApsimTT, rain, radiation, evap, vp, VPD, PARIO, radnJ,
-               PQ, PQday, PQvpdday, PQvpdfdrday, sinDEC, cosDEC, a, b, hour, sinB, SC, sinINT, Ta, FDR, vpsl, ETpt)
+        select(year, dayofYear, runDate, maxTemp, minTemp, avgTemp, daylength, ApsimTT, rain, radiation, evap, 
+               vp, VPDMax, VPDMin, VPDFrac, VPD, PARIO, radnJ, PQ, PQday, PQvpdday, PQvpdfdrday,
+               sinDEC, cosDEC, a, b, hour, sinB, SC, sinINT, Ta, FDR, vpsl, ETpt)
     
     outFilename <- str_replace(filename, "modifiedMet", "modMET_csv")
     outFilename <- str_replace(outFilename, ".met", ".csv")
