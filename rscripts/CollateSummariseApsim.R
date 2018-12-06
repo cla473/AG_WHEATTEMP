@@ -10,14 +10,13 @@
 
 rm(list = ls())
 library(optparse)
-library(tidyverse)
 library(lubridate)
+library(tidyverse)
 
 # define the working directories
 #apsim_sourcedir <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/"
-metfile_sourcedir = "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/modMET_csv"
+metfile_sourcedir <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/modMET_csv"
 outputDir <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Summaries/"
-
 
 #-------------------------------------------------------------------------------------
 # Input Details:
@@ -34,7 +33,8 @@ outputDir <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Summaries/"
 
 
 option_list = list(
-    make_option(c("-f", "--filepath"), type="string", help="The Directory for the Simulation (.RData) files to be processed.")
+    make_option(c("-f", "--filepath"), type="character", default=NULL, 
+                help="The Directory for the Simulation (.RData) files to be processed.", metavar="character")
 );
 
 opt_parser = OptionParser(option_list=option_list);
@@ -45,17 +45,17 @@ if (is.null(opt$filepath)){
     stop("At least one argument must be supplied (filepath)", call.=FALSE)
 }
 inpath <- opt$filepath
-
+print(opt$filepath)
 
 #this is for testing
 #cultFileList <- list.files(path = '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac', recursive = FALSE, full.names = TRUE) 
 #inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac/" 
-inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Janz/"
+#inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Janz/"
 #infile <- cultFileList[1]
 
 fileList <- list.files(path=inpath, pattern="*.RData", recursive = FALSE, full.names = TRUE) 
 
-i <- 4
+#i <- 4
 par_generate <- function(i, fileList, metfile_sourcedir, outputDir) {
 
     library(tidyverse)
