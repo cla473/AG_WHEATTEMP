@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH --time=2:0:0
+#SBATCH --mem=1gb
+#SBATCH --job-name=stan2
+
+module load R/3.4.4
+
+#generate a list of directories - this needs to be run from OUTSIDE of the array job initially:
+#ls /OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output > dir_list.txt
+
+(( pattern = SLURM_ARRAY_TASK_ID % 16 ))
+(( cultivar = SLURM_ARRAY_TASK_ID / 16 + 1 ))
+cultivar=$(sed -n ${cultivar}p dir_list.txt)
+printf -v pattern "%x" $pattern
+echo $cultivar $pattern
+
+#Rscript ./CollateSummariseApsim.R -f /OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/$x
+Rscript ./coll.R -f /OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/$cultivar -p $pattern
+
+##Rscript ./CollateSummariseApsim.R -f "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac"
+
+
+#Sample Usage:
+# ./CollateSummariseApsim.sh
+
+
