@@ -54,13 +54,13 @@ print(paste(inpath,pattern))
 #this is for testing
 #cultFileList <- list.files(path = '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac', recursive = FALSE, full.names = TRUE) 
 #inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac/" 
-#inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bonnie_Rock/"
+#inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Dart/e921baee1cf64d4ae152c752585757bae.RData"
 #infile <- cultFileList[1]
 #infile <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Hartog/0a0b34b7fd1831a28b8f7f2aad302265.RData"
 
 empty <- function(f) {
     info = file.info(f)
-    return (is.na(info$size) || info$size %% 1024 == 0)
+    return (is.na(info$size) || info$size == 0)
 }
 
 process1 <- function(infile, metfile_sourcedir, outputDir) {

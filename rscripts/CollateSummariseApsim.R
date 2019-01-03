@@ -50,8 +50,8 @@ print(opt$filepath)
 #this is for testing
 #cultFileList <- list.files(path = '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac', recursive = FALSE, full.names = TRUE) 
 #inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac/" 
-#inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Janz/"
-#infile <- cultFileList[1]
+inpath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Axe/"
+infile <- paste0(inpath, "ad0c9f64853c3ee37ea3fdcff47acdd8.RData")
 
 fileList <- list.files(path=inpath, pattern="*.RData", recursive = FALSE, full.names = TRUE) 
 
