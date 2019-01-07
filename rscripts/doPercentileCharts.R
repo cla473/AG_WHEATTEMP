@@ -2,8 +2,6 @@ rm(list = ls())
 library(tidyverse)
 library(sf)
 library(ggplot2)
-#library(readr)
-#library(lettercase)
 library(viridis)
 library(rvest)
 library(ggrepel)
@@ -17,14 +15,21 @@ dataFile <- paste0(filePath, "/", "percentiles.txt")
 all_df <- read_csv(dataFile)
 str(all_df)
 
+# select only the columns we require, and calculate the dates that we want
+# and identify Tasmanians sites, so that they can be added back in later
+all_df <- all_df %>% 
+    select(Long, Lat, LFrost_90P) %>% 
+    mutate(Date = as.Date(LFrost_90P -1, "2017-01-01"),
+           IsTas = ifelse((Lat < -40 & Lat > -45), "Y", ""))
+
+#filterlimit <- 182
+filterlimit <- 203
 
 noFrost_df <- all_df %>% 
-    select(Long, Lat, LFrost_90P) %>% 
-    filter(LFrost_90P <= 182)
+    filter(LFrost_90P <= filterlimit)
 
 Frost_df <- all_df %>% 
-    select(Long, Lat, LFrost_90P) %>% 
-    filter(LFrost_90P > 182)
+    filter(LFrost_90P > filterlimit)
 
 #now need to graph the LFrost_90P
 # 1. Separate tout those sites with value of 182, and graph them as gray
@@ -57,6 +62,19 @@ st_geometry(noFrost_points_sf)
 # need to do this as there is no CRS information with the AUS shape files
 st_crs(noFrost_points_sf) <- st_crs(regions_mapped)
 
+# Need to eliminate any points that are not within the regions
+pcheck <- noFrost_points_sf$geometry %>% 
+    st_intersects(regions_mapped$geometry) %>% 
+    map_lgl(function(x) length(x) > 0)
+
+pcheck <- as.data.frame(pcheck)
+noFrost_points_sf$InRegion <- pcheck
+#ADD BACK IN TASMANIA
+noFrost_points_sf[noFrost_points_sf$IsTas == "Y", "InRegion"] <- TRUE
+
+#FILTER BASED ON THE REGIONS
+noFrost_points_sf <- noFrost_points_sf[noFrost_points_sf$InRegion==TRUE,]
+
 
 #this just shows map of Australia
 ggplot() + 
@@ -66,12 +84,6 @@ ggplot() +
     theme_bw()
 
 #this shows the points on the map, with colour scale for value required (LFrost_90P)
-ggplot() + 
-    geom_sf(data=noFrost_points_sf) +
-    coord_sf(xlim=c(112, 156), ylim=c(-10, -45)) +
-    labs(x="long", y="lat") +
-    theme_bw()
-
 ggplot() + 
     geom_sf(data=aus_mapped) +
     geom_sf(data=noFrost_points_sf, colour="grey", alpha=0.7, show.legend = "point") +
@@ -91,19 +103,52 @@ st_geometry(Frost_points_sf)
 # need to do this as there is no CRS information with the AUS shape files
 st_crs(Frost_points_sf) <- st_crs(regions_mapped)
 
+# Need to eliminate any points that are not within the regions
+pcheck <- Frost_points_sf$geometry %>% 
+    st_intersects(regions_mapped$geometry) %>% 
+    map_lgl(function(x) length(x) > 0)
+
+pcheck <- as.data.frame(pcheck)
+Frost_points_sf$InRegion <- pcheck
+#ADD BACK IN TASMANIA
+Frost_points_sf[Frost_points_sf$IsTas == "Y", "InRegion"] <- TRUE
+
+#FILTER BASED ON THE REGIONS
+Frost_points_sf <- Frost_points_sf[Frost_points_sf$InRegion==TRUE,]
 
 colPalette <- colorRampPalette(rev(brewer.pal(9, "YlGnBu")))
 
+#need to show 1-Jul, 1-Aug, 1-Sept, 1-Oct, 1-Nov, 1-Dec
+#labels=c("1-Jul", "1-Aug", "1-Sept", "1-Oct", "1-Nov", "1-Dec")
+#these are doy  182,   213,    244,   274,   305,   335
+
+#labels=c(335, 305, 274, 244, 213, 182)'
+#breaks=c(182, 213, 244, 274, 305, 335)'
+#need to had the dates, instead of the doy
 ggplot() + 
     geom_sf(data=aus_mapped) +
-    geom_sf(data=Frost_points_sf, aes(colour=LFrost_90P), alpha=0.7, show.legend = "point") +
-    scale_colour_gradientn(colours=colPalette(10), limits=c(183, 365)) +
-    coord_sf(xlim=c(112, 156), ylim=c(-10, -45)) +
-    theme_bw()
+    geom_sf(data=noFrost_points_sf, colour="grey", size=0.6, show.legend="point") +
+    geom_sf(data=Frost_points_sf, aes(colour=LFrost_90P), size=0.6, alpha=0.7, show.legend="point") +
+    scale_colour_gradientn(colours=colPalette(10), limits=c(182, 365), 
+                           breaks=c(182, 213, 244, 274, 305, 335),
+                           labels=c("1-Jul", "1-Aug", "1-Sept", "1-Oct", "1-Nov", "1-Dec")) +
+    coord_sf(xlim=c(112, 156), ylim=c(-20, -45)) +
+    labs(x="Longitude", y="Latitude", title="Australia - 1957 to 2017", 
+         subtitle="Date of Last Frost - 90th Percentile") +
+    guides(fill=guide_legend(reverse=TRUE)) + 
+    theme_bw() +
+    theme(legend.position="bottom", 
+          legend.direction="horizontal", 
+          legend.title=element_blank(),
+          legend.spacing.x = unitx(0.5, "cm"),
+          legend.text=element_text(margin=margin(r=10, unit="pt"))) 
 
-outfile <- paste0(mapPath, "/LFrost_90P.png")
+#NOTE:  keywidth doesn't seem to work, and although the legend is in the correct position,
+#       still need to stretch it out so that all of the dates are visible, try with legend.text.
+#       perhaps try legend.spacing.x = units(0.5, "cm"),
+#        ..... haven't ran this one yet.
+
+outfile <- paste0(mapPath, "/LFrost_90P_7.png")
 ggsave(outfile, width=7, height=6, units="in")
-
-#need to add the noFrost data to this, change the shape of the chart, compare to Bangyou's.
 
 
