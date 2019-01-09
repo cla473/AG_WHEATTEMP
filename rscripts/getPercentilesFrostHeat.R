@@ -1,5 +1,5 @@
 #------------------------------------------------------------
-# getFrostInformation.R
+# getPercentilesFrostHeat.R
 #------------------------------------------------------------
 # This will check each of the Apsim Weather files, and collate a list of Percentiles for all weather files,
 # for both Frost and Heat Days
@@ -23,14 +23,23 @@ metListFilename <- paste0(metFilePath, "/", "metFilesList.txt")
 met_df <- read_csv(metListFilename)
  
 #start with empty outputfile
-outfile <- paste0(metFilePath, "/", "percentiles.txt")
-# outfile <- paste0(metFilePath, "/", "percentiles_tmp.txt")
-headers <- "Location, Long, Lat, LFrost_70P, LFrost_80P, LFrost_90P, FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P"
-write(headers, file=outfile)
+outfile_Percentile <- paste0(metFilePath, "/", "percentiles_2.txt")
+# outfile_Percentile <- paste0(metFilePath, "/", "percentiles_tmp.txt")
+headers <- "Location, Long, Lat, "
+headers <- paste0(headers, "LFrost_70P, LFrost_80P, LFrost_90P, ")
+headers <- paste0(headers, "FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P, ")
+headers <- paste0(headers, "FWL1, FWL2, FWL3, FWL4, FWL5, ")
+headers <- paste0(headers, "DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050")
+write(headers, file=outfile_Percentile)
 
+outfile_Frost <- paste0(metFilePath, "/", "LastFrosts.csv")
+outfile_Heat <- paste0(metFilePath, "/", "FirstHeats.csv")
+FrostHeat_headers <- paste(as.character(c("Location", "Long", "Lat", 1957:2017)), sep= "' '", collapse=", ")
+write(FrostHeat_headers, file=outfile_Frost)
+write(FrostHeat_headers, file=outfile_Heat)
 
 i <- 1
-par_generate <- function(i, met_df, outfile) {
+par_generate <- function(i, met_df, outfile_Percentile) {
 #get data for moree and have a look   15120-2945
 #for (i in 45001:51033) {}
 #for (i in 1:26) {
@@ -74,9 +83,30 @@ par_generate <- function(i, met_df, outfile) {
         arrange(year) %>% 
         merge(mDataFrost, by="year", all.x = TRUE) %>% 
         mutate(dayofYear = ifelse(is.na(dayofYear), 182, dayofYear)) %>% 
+        select(year, dayofYear) %>% 
+        arrange(year)
+    
+    #add this the the the last frost file:
+    #+------------+--------+--------+------+------+---------------
+    #| Location   | Long   | Lat    | 1957 | 1958 | 1960 | etc ...
+    #+------------+--------+--------+------+------+------+--------
+    #| 11400-2725 | 114.00 | -27.25 |  182 |  182 |  182 | 182 ...
+    #| 11400-2730 | 114.00 | -27.30 |  187 |  185 |  182 | 185 ...
+    LastFrosts <- lastFrostsDays %>% 
+        spread(key = year, value=dayofYear) %>% 
+        mutate(Location = Location,
+               Long = Long,
+               Lat = Lat) %>% 
+        select(Location, Long, Lat, everything())
+
+    #write this to the Last Frost File - don't forget to exclude the header
+    write.table(LastFrosts, file=outfile_Frost, sep = "," , append = TRUE, col.names = FALSE, row.names = FALSE)
+
+    #now we can do the percentile calculations
+    lastFrostsDays <- lastFrostsDays %>% 
         select(dayofYear) %>% 
         arrange(dayofYear)
-    
+
     lastFrostsDays <- unlist(lastFrostsDays)
     LFrost_Probs <- unname(quantile(lastFrostsDays, probs=c(0.70, 0.80, 0.90)))
     LFrost_70P <- LFrost_Probs[1]
@@ -100,9 +130,24 @@ par_generate <- function(i, met_df, outfile) {
         arrange(year) %>% 
         merge(mDataHeat, by="year", all.x = TRUE) %>% 
         mutate(dayofYear = ifelse(is.na(dayofYear), 365, dayofYear)) %>% 
-        select(dayofYear) %>% 
-        arrange(dayofYear)
+        select(year, dayofYear) %>% 
+        arrange(year)
+
     
+    FirstHeats <- firstHeatDays %>% 
+        spread(key = year, value=dayofYear) %>% 
+        mutate(Location = Location,
+               Long = Long,
+               Lat = Lat) %>% 
+        select(Location, Long, Lat, everything())
+    
+    #write this to the Last Frost File - don't forget to exclude the header
+    write.table(FirstHeats, file=outfile_Heat, sep = "," , append = TRUE, col.names = FALSE, row.names = FALSE)
+
+    firstHeatDays <- firstHeatDays %>% 
+        select(dayofYear) %>% 
+        arrange(dayofYear) 
+        
     firstHeatDays <- unlist(firstHeatDays)
     FHeat_Probs <- unname(quantile(firstHeatDays, probs=c(0.10, 0.20, 0.30, 0.40, 0.50)))
     FHeat_10P <- FHeat_Probs[1]
@@ -111,11 +156,37 @@ par_generate <- function(i, met_df, outfile) {
     FHeat_40P <- FHeat_Probs[4]
     FHeat_50P <- FHeat_Probs[5]
     
-    outrow = paste(Location, Long, Lat, LFrost_70P, LFrost_80P, LFrost_90P, FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P, sep=", ")
-    write(outrow, file=outfile, append=TRUE)
+    #need to add extra columns here
+    # FWL1	Length of the flowering window between the 90th frost percentile and 10th heat percentile
+    # FWL2	Length of the flowering window between the 90th frost percentile and 20th heat percentile
+    # FWL3	Length of the flowering window between the 90th frost percentile and 30th heat percentile
+    # FWL4	Length of the flowering window between the 90th frost percentile and 40th heat percentile
+    # FWL5	Length of the flowering window between the 90th frost percentile and 50th heat percentile
+    FWL1 <- LFrost_90P - FHeat_10P
+    FWL2 <- LFrost_90P - FHeat_20P
+    FWL3 <- LFrost_90P - FHeat_30P
+    FWL4 <- LFrost_90P - FHeat_40P
+    FWL5 <- LFrost_90P - FHeat_50P
+    # 
+    # DIFFH1020	Number of days between 10th and 20th percentile for heat
+    # DIFFH1030	Number of days between 10th and 30th percentile for heat
+    # DIFFH1040	Number of days between 10th and 40th percentile for heat
+    # DIFFH1050	Number of days between 10th and 50th percentile for heat
+    DIFFH1020 <- FHeat_20P - FHeat_10P
+    DIFFH1030 <- FHeat_30P - FHeat_10P
+    DIFFH1040 <- FHeat_40P - FHeat_10P
+    DIFFH1050 <- FHeat_50P - FHeat_10P
+    
+    #now generate the string to output to the file 
+    outrow <- paste(Location, Long, Lat, sep=", ")
+    outrow <- paste(outrow, LFrost_70P, LFrost_80P, LFrost_90P, sep=", ")
+    outrow <- paste(outrow, FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P, sep=", ")
+    outrow <- paste(outrow, FWL1, FWL2, FWL3, FWL4, FWL5, sep=", ")
+    outrow <- paste(outrow, DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050, sep=", ")
+    write(outrow, file=outfile_Percentile, append=TRUE)
 }
 
-#percentfile <- read_csv(outfile)
+#percentfile <- read_csv(outfile_Percentile)
 #Will have a table:
 # Location, Long, Lat, LFrost_70P, LFrost_80P, LFrost_90P, FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FH_50P
 # 14975  -3035    250
@@ -131,9 +202,15 @@ if (is.null(cl)) {
     cl <- makeCluster(parallel::detectCores() - 1, type = 'SOCK')
 }
 
-parLapply(cl, seq_len(nrow(met_df)), par_generate, met_df, outfile)
+parLapply(cl, seq_len(nrow(met_df)), par_generate, met_df, outfile_Percentile)
 
 
+
+#=====================================================================================
+# This is to tidy up the file
+# some of the data being written to the file is on the same line as other data, and is
+# followed by a blank row.  This can happen multiple times.
+#=====================================================================================
 
 
 cols <- unlist(strsplit(headers, ","))  #convert the column names (string) to vector
@@ -141,8 +218,7 @@ cols <- trimws(cols)    #remove any leading/trailing spaces from names
 newData <- data.frame(matrix(ncol=length(cols), nrow=0),stringsAsFactors = FALSE)
 colnames(newData) <- cols
 
-#this is to tidy up the file
-conn <- file(outfile, open="r")
+conn <- file(outfile_Percentile, open="r")
 lines <- readLines(conn) 
 i <- 8
 for (i in 2:length(lines)) {
