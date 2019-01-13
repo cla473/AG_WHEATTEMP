@@ -5,13 +5,13 @@
 
 module load R/3.4.4
 
-#MYDIR="/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/*"
+MYDIR="/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/*"
 
-#for DIR in find -type d -path ${MYDIR}; do
-#	echo ${DIR}
-#	Rscript ./CollateSummariseApsim.R -y $i
-#done
-Rscript ./CollateSummariseApsim.R -f "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac"
+for DIR in find -type d -path ${MYDIR}; do
+	echo ${DIR}
+	Rscript ./CollateSummariseApsim.R -f ${DIR}
+done
+#Rscript ./CollateSummariseApsim.R -f "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Condor/Output/Bolac"
 
 
 #Sample Usage:
