@@ -9,6 +9,7 @@ library(tidyverse)
 
 metFilePath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/modMET_csv'
 metListFilename <- paste0(metFilePath, "/", "metFilesList.txt")
+outFilePath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs'
 #metListFilename <- paste0(metFilePath, "/", "metFilesList_tmp.txt")
 
 # #Only need to do this if the is no file
@@ -23,8 +24,7 @@ metListFilename <- paste0(metFilePath, "/", "metFilesList.txt")
 met_df <- read_csv(metListFilename)
  
 #start with empty outputfile
-outfile_Percentile <- paste0(metFilePath, "/", "percentiles_2.txt")
-# outfile_Percentile <- paste0(metFilePath, "/", "percentiles_tmp.txt")
+outfile_Percentile <- paste0(outFilePath, "/", "percentiles2.csv")
 headers <- "Location, Long, Lat, "
 headers <- paste0(headers, "LFrost_70P, LFrost_80P, LFrost_90P, ")
 headers <- paste0(headers, "FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P, ")
@@ -32,17 +32,16 @@ headers <- paste0(headers, "FWL1, FWL2, FWL3, FWL4, FWL5, ")
 headers <- paste0(headers, "DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050")
 write(headers, file=outfile_Percentile)
 
-outfile_Frost <- paste0(metFilePath, "/", "LastFrosts.csv")
-outfile_Heat <- paste0(metFilePath, "/", "FirstHeats.csv")
+outfile_Frost <- paste0(outFilePath, "/", "LastFrosts.csv")
+outfile_Heat <- paste0(outFilePath, "/", "FirstHeats.csv")
 FrostHeat_headers <- paste(as.character(c("Location", "Long", "Lat", 1957:2017)), sep= "' '", collapse=", ")
 write(FrostHeat_headers, file=outfile_Frost)
 write(FrostHeat_headers, file=outfile_Heat)
 
-i <- 1
-par_generate <- function(i, met_df, outfile_Percentile) {
-#get data for moree and have a look   15120-2945
-#for (i in 45001:51033) {}
-#for (i in 1:26) {
+i <- 10
+#par_generate <- function(i, met_df, outfile_Percentile, outfile_Heat, outfile_Frost) {
+#for (i in 1:51033) {}
+for (i in 40001:51032) {
     library(tidyverse)
     
     print(paste0("rowId: ", i))
@@ -193,6 +192,12 @@ par_generate <- function(i, met_df, outfile_Percentile) {
 # 15032  -2525    214
 
 
+#=====================================================================================
+# this is used to run the above as a function in parallel
+# this works very quickly, but does manage to mess the file up a bit, and the code
+# show below is required to sort it out agian
+#=====================================================================================
+
 library(parallel)
 library(snow)
 # Get cluster from pearcey
@@ -202,7 +207,8 @@ if (is.null(cl)) {
     cl <- makeCluster(parallel::detectCores() - 1, type = 'SOCK')
 }
 
-parLapply(cl, seq_len(nrow(met_df)), par_generate, met_df, outfile_Percentile)
+#parLapply(cl, seq_len(nrow(met_df)), par_generate, met_df, outfile_Percentile)
+parLapply(cl, seq_len(nrow(met_df)), par_generate, met_df, outfile_Percentile, outfile_Heat, outfile_Frost)
 
 
 
