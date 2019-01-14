@@ -161,11 +161,11 @@ for (i in 40001:51032) {
     # FWL3	Length of the flowering window between the 90th frost percentile and 30th heat percentile
     # FWL4	Length of the flowering window between the 90th frost percentile and 40th heat percentile
     # FWL5	Length of the flowering window between the 90th frost percentile and 50th heat percentile
-    FWL1 <- LFrost_90P - FHeat_10P
-    FWL2 <- LFrost_90P - FHeat_20P
-    FWL3 <- LFrost_90P - FHeat_30P
-    FWL4 <- LFrost_90P - FHeat_40P
-    FWL5 <- LFrost_90P - FHeat_50P
+    FWL1 <- FHeat_10P - LFrost_90P
+    FWL2 <- FHeat_20P - LFrost_90P
+    FWL3 <- FHeat_30P - LFrost_90P
+    FWL4 <- FHeat_40P - LFrost_90P
+    FWL5 <- FHeat_50P - LFrost_90P
     # 
     # DIFFH1020	Number of days between 10th and 20th percentile for heat
     # DIFFH1030	Number of days between 10th and 30th percentile for heat
