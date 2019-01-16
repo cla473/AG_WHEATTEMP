@@ -15,12 +15,13 @@ dataFile <- paste0(filePath, "/", "percentiles2.csv")
 all_df <- read_csv(dataFile)
 str(all_df)
 
+# The values in the file are listed as Location, Long, Lat, followed by:
+#   Frost Values: LFrost_70P, LFrost_80P, LFrost_90P
+#   Heat Values:  FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P
+#   Flowering Windows: FWL1, FWL2, FWL3, FWL4, FWL5
+#   Differences:   DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050
+valueOfInterest <- "LFrost_70P"
 
-# Frost Values: LFrost_70P, LFrost_80P, LFrost_90P
-# Heat Values:  FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P
-# Flowering Windows: FWL1, FWL2, FWL3, FWL4, FWL5
-# Differences:   DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050
-valueOfInterest <- "FWL2"
 
 #these are the default values
 filterlimit <- 0
@@ -225,7 +226,7 @@ if (ChartType == "FROST") {
 } else if (ChartType == "FWL") {
     colPalette <- colorRampPalette(brewer.pal(9, "YlGnBu"))
 } else if (ChartType == "DIFF") {
-    colPalette <- colorRampPalette(rev(brewer.pal(9, "YlOrRd")))
+    colPalette <- colorRampPalette(brewer.pal(9, "BuPu"))
 }
 
 #=================================================================
@@ -234,7 +235,7 @@ p <- ggplot() +
     geom_sf(data=aus_mapped) 
 
 if (ChartType == "HEAT" || ChartType == "FROST") {
-    print("in location 1")
+    print("Add in addition -grey- points for HEAT and FROST charts")
     p <- p + geom_sf(data=minData_points_sf, colour="grey", size=0.6, show.legend="point") 
 }
 
@@ -247,11 +248,11 @@ maxLimit <- max(mainData_df$dayOfYear)
 uniqueValues <- length(unique(mainData_df$dayOfYear))
 print(paste0("Min value: ", minLimit, ", Max value: ", maxLimit, ", Unique values: ", uniqueValues))
 
-if (ChartType == "FWL" || ChartType == "DIFF") {
-    print("Chart Type is FWL")
-    p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(minLimit, maxLimit))
+if (ChartType == "FWL") {
+    p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 183))
+} else if (ChartType == "DIFF") {
+    p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 60))
 } else {
-    print("Chart Type is ELSE")
     #It is a Heat OR Frost Chart
     p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(182, 365), 
                                     breaks=c(182, 213, 244, 274, 305, 335),
@@ -275,12 +276,27 @@ p <- p + theme(legend.position="bottom",
                legend.key.size = unit(0.4, "cm"), 
                legend.spacing.y = unit(0.3, "cm"))  
 
+print("Displaying Output")
 p
 
 #=================================================================
 # SAVING TAKES ALMOST AS LONG AS RENDERING
 ggsave(outfile, width=7, height=6, units="in")
-    
+print(paste0("File Saved as ", outfile))
+
+#}
+
+
+# The values in the file are listed as Location, Long, Lat, followed by:
+#   Frost Values: LFrost_70P, LFrost_80P, LFrost_90P
+#   Heat Values:  FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P
+#   Flowering Windows: FWL1, FWL2, FWL3, FWL4, FWL5
+#   Differences:   DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050
+#valueOfInterest <- "DIFFH1050"
+#generateChart(all_df, filePath, mapPath, dataFile, valueOfInterest) 
+
+
+
 
 
 # #=================================================================
