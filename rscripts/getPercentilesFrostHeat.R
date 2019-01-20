@@ -217,8 +217,6 @@ parLapply(cl, seq_len(nrow(met_df)), par_generate, met_df, outfile_Percentile, o
 # some of the data being written to the file is on the same line as other data, and is
 # followed by a blank row.  This can happen multiple times.
 #=====================================================================================
-
-
 cols <- unlist(strsplit(headers, ","))  #convert the column names (string) to vector
 cols <- trimws(cols)    #remove any leading/trailing spaces from names
 newData <- data.frame(matrix(ncol=length(cols), nrow=0),stringsAsFactors = FALSE)
@@ -303,3 +301,41 @@ newData2[2:11] <- sapply(newData2[2:11], as.numeric)
 #now we should have all of the data (51032 rows)
 newFile <- paste0(metFilePath, "/", "percentiles_new.txt")
 write.csv(newData2, file=newFile, row.names=FALSE)
+
+#=====================================================================================
+# This will open the ForstHeat and LastFrost files and add the mean/median for each
+# Not sure how this wil be used as yet.
+#=====================================================================================
+
+lastFrostsDays <- read_csv(outfile_Frost)
+LFMean <- lastFrostsDays %>% 
+    mutate(LFrost_mean = unlist(select(., `1957`:`2017`) %>% 
+                                    pmap(~ mean(c(...))))) %>% 
+    mutate(LFrost_median = unlist(select(., `1957`:`2017`) %>% 
+                                      pmap(~ median(c(...))))) %>% 
+    select(Location, Long, Lat, LFrost_mean, LFrost_median)
+
+
+firstHeatDays <- read_csv(outfile_Heat)
+FHMean <- firstHeatDays %>% 
+    mutate(FHeat_mean = unlist(select(., `1957`:`2017`) %>% 
+                                   pmap(~ mean(c(...))))) %>% 
+    mutate(FHeat_median = unlist(select(., `1957`:`2017`) %>% 
+                                     pmap(~ median(c(...))))) %>% 
+    select(Location, Long, Lat, FHeat_mean, FHeat_median)
+
+
+percentiles <- read_csv(outfile_Percentile)
+newPerentiles <- merge(percentiles, LFMean, by=c("Location", "Long", "Lat"))
+newPerentiles <- merge(newPerentiles, FHMean, by=c("Location", "Long", "Lat"))
+
+newPerentiles <- newPerentiles %>% 
+    select(Location, Long, Lat, LFrost_70P, LFrost_80P, LFrost_90P, LFrost_mean, LFrost_median,
+            FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P, FHeat_mean, FHeat_median,
+            FWL1, FWL2, FWL3, FWL4, FWL5,
+            DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050)
+
+new_Percentile <- paste0(outFilePath, "/", "percentiles.csv")
+write.csv(newPerentiles, file=new_Percentile, row.names=FALSE)
+
+#=====================================================================================
