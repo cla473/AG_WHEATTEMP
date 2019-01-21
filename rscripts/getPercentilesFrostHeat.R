@@ -303,6 +303,53 @@ newFile <- paste0(metFilePath, "/", "percentiles_new.txt")
 write.csv(newData2, file=newFile, row.names=FALSE)
 
 #=====================================================================================
+# This function has been provided by Bangyou Zheng 13/12/2018
+# Some utility functions for weather analysis
+# Significantly t-test with autocorrelation for time serial data 
+# 
+# Method is presented by Santer et al. 2000
+# @param x A vector of time serial data
+# @export
+
+ttest_ts <- function(y, slope = NULL)
+{
+    if(sum(is.na(y)) == 0) {
+        y <- as.numeric(y)
+        num <- length(y)
+        x <- seq(along = y)
+        if (is.null(slope))
+        {
+            slope <- cor(x, y) * sd(y)/sd(x)
+        }
+        
+        sb_m <- sqrt(sum((x - mean(x)) ^ 2))
+        inercept <- (sum(y) - slope * sum(x)) / num
+        et_x <- y - (inercept + slope * x)
+        ne_x <- cor(et_x[-1], et_x[-(num)])
+        ne_x <- num * (1 - ne_x) / (1 + ne_x)
+        se_x <- sqrt((1 / (ne_x - 2)) * sum(et_x * et_x, na.rm = TRUE))
+        sb_x <- se_x / sb_m
+        tb_x <- abs(slope / sb_x)
+        p_x <- (1 - pt(tb_x, df = ne_x - 2)) * 2
+        return (p_x)
+    } else {
+        return (NA)
+    }
+}
+
+ttest_slope <- function(y) {
+    if(sum(is.na(y)) == 0) {
+        y <- as.numeric(y)
+        x <- seq(along = y)
+        slope <- cor(x, y) * sd(y)/sd(x)
+    } else {
+        return (NA)
+    }
+}
+
+#=====================================================================================
+
+#=====================================================================================
 # This will open the ForstHeat and LastFrost files and add the mean/median for each
 # Not sure how this wil be used as yet.
 #=====================================================================================
@@ -313,7 +360,11 @@ LFMean <- lastFrostsDays %>%
                                     pmap(~ mean(c(...))))) %>% 
     mutate(LFrost_median = unlist(select(., `1957`:`2017`) %>% 
                                       pmap(~ median(c(...))))) %>% 
-    select(Location, Long, Lat, LFrost_mean, LFrost_median)
+    mutate(LFrost_slope = unlist(select(., `1957`:`2017`) %>% 
+                                      pmap(~ ttest_slope(c(...))))) %>% 
+    mutate(LFrost_ttests = unlist(select(., `1957`:`2017`) %>% 
+                                      pmap(~ ttest_ts(c(...))))) %>% 
+    select(Location, Long, Lat, LFrost_mean, LFrost_median, LFrost_slope, LFrost_ttests)
 
 
 firstHeatDays <- read_csv(outfile_Heat)
@@ -322,20 +373,33 @@ FHMean <- firstHeatDays %>%
                                    pmap(~ mean(c(...))))) %>% 
     mutate(FHeat_median = unlist(select(., `1957`:`2017`) %>% 
                                      pmap(~ median(c(...))))) %>% 
-    select(Location, Long, Lat, FHeat_mean, FHeat_median)
+    mutate(FHeat_slope = unlist(select(., `1957`:`2017`) %>% 
+                                     pmap(~ ttest_slope(c(...))))) %>% 
+    mutate(FHeat_ttests = unlist(select(., `1957`:`2017`) %>% 
+                                     pmap(~ ttest_ts(c(...))))) %>% 
+    select(Location, Long, Lat, FHeat_mean, FHeat_median, FHeat_slope, FHeat_ttests)
 
 
 percentiles <- read_csv(outfile_Percentile)
-newPerentiles <- merge(percentiles, LFMean, by=c("Location", "Long", "Lat"))
-newPerentiles <- merge(newPerentiles, FHMean, by=c("Location", "Long", "Lat"))
+# #This is what is in the original percentile file
+# percentiles <- percentiles %>%
+#     select(Location, Long, Lat, LFrost_70P, LFrost_80P, LFrost_90P,
+#        FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P,
+#        FWL1, FWL2, FWL3, FWL4, FWL5,
+#        DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050)
 
-newPerentiles <- newPerentiles %>% 
-    select(Location, Long, Lat, LFrost_70P, LFrost_80P, LFrost_90P, LFrost_mean, LFrost_median,
-            FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P, FHeat_mean, FHeat_median,
-            FWL1, FWL2, FWL3, FWL4, FWL5,
-            DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050)
+newPercentiles <- merge(percentiles, LFMean, by=c("Location", "Long", "Lat"))
+newPercentiles <- merge(newPercentiles, FHMean, by=c("Location", "Long", "Lat"))
+
+newPercentiles <- newPercentiles %>% 
+    select(Location, Long, Lat, LFrost_70P, LFrost_80P, LFrost_90P, 
+           LFrost_mean, LFrost_median, LFrost_slope, LFrost_ttests,
+           FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P, 
+           FHeat_mean, FHeat_median, FHeat_slope, FHeat_ttests,
+           FWL1, FWL2, FWL3, FWL4, FWL5,
+           DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050)
 
 new_Percentile <- paste0(outFilePath, "/", "percentiles.csv")
-write.csv(newPerentiles, file=new_Percentile, row.names=FALSE)
+write.csv(newPercentiles, file=new_Percentile, row.names=FALSE)
 
-#=====================================================================================
+

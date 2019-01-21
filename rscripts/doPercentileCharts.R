@@ -10,17 +10,21 @@ library(RColorBrewer)
 
 filePath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs'
 mapPath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/maps'
-dataFile <- paste0(filePath, "/", "percentiles2.csv")
+dataFile <- paste0(filePath, "/", "percentiles.csv")
 
 all_df <- read_csv(dataFile)
 str(all_df)
 
 # The values in the file are listed as Location, Long, Lat, followed by:
-#   Frost Values: LFrost_70P, LFrost_80P, LFrost_90P
+#   Frost Values: LFrost_70P, LFrost_80P, LFrost_90P, 
+#                 LFrost_Trend
 #   Heat Values:  FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P
+#                 FHeat_Trend
 #   Flowering Windows: FWL1, FWL2, FWL3, FWL4, FWL5
 #   Differences:   DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050
-valueOfInterest <- "LFrost_70P"
+#                  Filtered where Diff <= 40
+#                  DIFFH1020_Max40, DIFFH1030_Max40, DIFFH1040_Max40, DIFFH1050_Max40
+valueOfInterest <- "LFrost_Trend"
 
 
 #these are the default values
@@ -28,20 +32,30 @@ filterlimit <- 0
 outfile <- paste0(mapPath, "/", valueOfInterest, ".png")
 
 ChartType <- ""
-if (grepl("Frost", valueOfInterest) == TRUE) {
+HasMaxLimit <- FALSE
+if (grepl("Trend", valueOfInterest) == TRUE) {
+    #not sure what we do here
+    ChartType <- "TREND"
+} else if (grepl("Frost", valueOfInterest) == TRUE) {
     ChartType <- "FROST"
-    #"LFrost_70P", "LFrost_80P", "LFrost_90P"
+    #LFrost_70P, LFrost_80P, LFrost_90P
     filterlimit <- 203 #(182 + 21 (approx 10%))
 } else if (grepl("Heat", valueOfInterest) == TRUE) {
     ChartType <- "HEAT"
-    #"FHeat_10P", "FHeat_20P", "FHeat_30P", "FHeat_40P", "FHeat_50P"
+    #FHeat_10P, FHeat_20P, FHeat_30P, FHeat_40P, FHeat_50P
     filterlimit <- 342 #(365 - 23 (approx 10%))
 } else if (grepl("FWL", valueOfInterest) == TRUE) {
-    #"FWL1", "FWL2", "FWL3", "FWL4", "FWL5"
+    #FWL1, FWL2, FWL3, FWL4, FWL5
     ChartType <- "FWL"
 } else if (grepl("DIFF", valueOfInterest) == TRUE) {
-    #"DIFFH1020", "DIFFH1030", "DIFFH1040", "DIFFH1050"
+    #DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050
+    #These have been filtered for only those with DIFF value <= 40
+    #DIFFH1020_40, DIFFH1030_40, DIFFH1040_40, DIFFH1050_40  
     ChartType <- "DIFF"
+    if (grepl("_Max40", valueOfInterest) == TRUE) {
+        HasMaxLimit <- TRUE
+        filterlimit <- 40
+    }
 }
 print(paste0("ChartType is ", ChartType))
 
@@ -77,14 +91,19 @@ if (valueOfInterest == "LFrost_70P") {
 } else if (valueOfInterest == "FWL5") { 
     chartSubTitle <- "Flowering window (Days) between 90th Frost percentile and 50th Heat percentile" 
 
-} else if (valueOfInterest == "DIFFH1020") { 
+} else if (valueOfInterest == "DIFFH1020" || valueOfInterest == "DIFFH1020_Max40") { 
     chartSubTitle <- "Number of days between 10th and 20th percentile for Heat" 
-} else if (valueOfInterest == "DIFFH1030") { 
+} else if (valueOfInterest == "DIFFH1030" || valueOfInterest == "DIFFH1030_Max40") { 
     chartSubTitle <- "Number of days between 10th and 30th percentile for Heat" 
-} else if (valueOfInterest == "DIFFH1040") { 
+} else if (valueOfInterest == "DIFFH1040" || valueOfInterest == "DIFFH1040_Max40") { 
     chartSubTitle <- "Number of days between 10th and 40th percentile for Heat" 
-} else if (valueOfInterest == "DIFFH1050") { 
-    chartSubTitle <- "Number of days between 10th and 50th percentile for Heat" 
+} else if (valueOfInterest == "DIFFH1050" || valueOfInterest == "DIFFH1050_Max40") {
+    chartSubTitle <- "Number of days between 10th and 50th percentile for Heat"
+    
+} else if (valueOfInterest == "LFrost_Trend") {
+    chartSubTitle <- expression("Trend of number of Frost days (day "*y^"-1"*")")
+} else if (valueOfInterest == "FHeat_Trend") {
+    chartSubTitle <- expression("Trend of number of Heat days (day "*y^"-1"*")")
 }
 print(paste0("Chart SubTitle is ", chartSubTitle))
 
@@ -119,14 +138,25 @@ if (valueOfInterest == "LFrost_70P") {
 } else if (valueOfInterest == "FWL5") { 
     all_df2 <- all_df %>% rename(dayOfYear = FWL5)
            
-} else if (valueOfInterest == "DIFFH1020") { 
+} else if (valueOfInterest == "DIFFH1020" || valueOfInterest == "DIFFH1020_Max40") { 
     all_df2 <- all_df %>% rename(dayOfYear = DIFFH1020)
-} else if (valueOfInterest == "DIFFH1030") { 
+} else if (valueOfInterest == "DIFFH1030" || valueOfInterest == "DIFFH1030_Max40") { 
     all_df2 <- all_df %>% rename(dayOfYear = DIFFH1030)
-} else if (valueOfInterest == "DIFFH1040") { 
+} else if (valueOfInterest == "DIFFH1040" || valueOfInterest == "DIFFH1040_Max40") { 
     all_df2 <- all_df %>% rename(dayOfYear = DIFFH1040)
-} else if (valueOfInterest == "DIFFH1050") { 
+} else if (valueOfInterest == "DIFFH1050" || valueOfInterest == "DIFFH1050_Max40") { 
     all_df2 <- all_df %>% rename(dayOfYear = DIFFH1050)
+
+} else if (valueOfInterest == "LFrost_Trend") { 
+    #this filter has to be done here as were are filtering on one column and graphing another
+    all_df2 <- all_df %>% 
+        filter(LFrost_ttests <= 0.10) %>% 
+        rename(dayOfYear = LFrost_slope)
+} else if (valueOfInterest == "FHeat_Trend") { 
+    #this filter has to be done here as were are filtering on one column and graphing another
+    all_df2 <- all_df %>% 
+        filter(FHeat_ttests <= 0.10) %>% 
+        rename(dayOfYear = FHeat_slope)
 }
 
 
@@ -142,6 +172,9 @@ if (ChartType == "FROST") {
 } else if (ChartType == "HEAT") {
     minData_df <- all_df2 %>% filter(dayOfYear >= filterlimit) 
     mainData_df <- all_df2 %>% filter(dayOfYear < filterlimit) 
+} else if (HasMaxLimit == TRUE) {
+    #this currently only applies to DIFF...
+    mainData_df <- all_df2 %>% filter(dayOfYear <= filterlimit) 
 } else {
     mainData_df <- all_df2
 }
@@ -227,6 +260,8 @@ if (ChartType == "FROST") {
     colPalette <- colorRampPalette(brewer.pal(9, "YlGnBu"))
 } else if (ChartType == "DIFF") {
     colPalette <- colorRampPalette(brewer.pal(9, "BuPu"))
+} else if (ChartType == "TREND") {
+    colPalette <- colorRampPalette(rev(brewer.pal(9, "RdYlBu")))
 }
 
 #=================================================================
@@ -241,8 +276,6 @@ if (ChartType == "HEAT" || ChartType == "FROST") {
 
 p <- p + geom_sf(data=mainData_points_sf, aes(colour=dayOfYear), size=0.6, alpha=0.7, show.legend="point") 
 
-
-
 minLimit <- min(mainData_df$dayOfYear)
 maxLimit <- max(mainData_df$dayOfYear)
 uniqueValues <- length(unique(mainData_df$dayOfYear))
@@ -251,7 +284,13 @@ print(paste0("Min value: ", minLimit, ", Max value: ", maxLimit, ", Unique value
 if (ChartType == "FWL") {
     p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 183))
 } else if (ChartType == "DIFF") {
-    p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 60))
+    if (HasMaxLimit == TRUE) {
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 40))
+    } else {
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 60))
+    }
+} else if (ChartType == "TREND") {
+    p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.5, 0.5))
 } else {
     #It is a Heat OR Frost Chart
     p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(182, 365), 
@@ -264,7 +303,7 @@ p <- p + coord_sf(xlim=c(112, 156), ylim=c(-10, -45)) +
     theme_bw() 
 
 legendKeyWidth <- 2.5 
-if (ChartType == "FWL" || ChartType == "DIFF") {
+if (ChartType == "FWL" || ChartType == "DIFF" || ChartType == "TREND") {
     legendKeyWidth <- 2.0
 }
 print(paste0("legendKeyWidth is ", legendKeyWidth))
