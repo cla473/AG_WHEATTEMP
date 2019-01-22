@@ -24,7 +24,7 @@ str(all_df)
 #   Differences:   DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050
 #                  Filtered where Diff <= 40
 #                  DIFFH1020_Max40, DIFFH1030_Max40, DIFFH1040_Max40, DIFFH1050_Max40
-valueOfInterest <- "LFrost_Trend"
+valueOfInterest <- "FHeat_Trend"
 
 
 #these are the default values
@@ -101,9 +101,9 @@ if (valueOfInterest == "LFrost_70P") {
     chartSubTitle <- "Number of days between 10th and 50th percentile for Heat"
     
 } else if (valueOfInterest == "LFrost_Trend") {
-    chartSubTitle <- expression("Trend of number of Frost days (day "*y^"-1"*")")
+    chartSubTitle <- expression("Trend of Last Frost day (day "*y^"-1"*")")
 } else if (valueOfInterest == "FHeat_Trend") {
-    chartSubTitle <- expression("Trend of number of Heat days (day "*y^"-1"*")")
+    chartSubTitle <- expression("Trend of First Heat day (day "*y^"-1"*")")
 }
 print(paste0("Chart SubTitle is ", chartSubTitle))
 
@@ -148,23 +148,27 @@ if (valueOfInterest == "LFrost_70P") {
     all_df2 <- all_df %>% rename(dayOfYear = DIFFH1050)
 
 } else if (valueOfInterest == "LFrost_Trend") { 
-    #this filter has to be done here as were are filtering on one column and graphing another
-    all_df2 <- all_df %>% 
-        filter(LFrost_ttests <= 0.10) %>% 
-        rename(dayOfYear = LFrost_slope)
+    all_df2 <- all_df %>% rename(dayOfYear = LFrost_slope)
 } else if (valueOfInterest == "FHeat_Trend") { 
-    #this filter has to be done here as were are filtering on one column and graphing another
-    all_df2 <- all_df %>% 
-        filter(FHeat_ttests <= 0.10) %>% 
-        rename(dayOfYear = FHeat_slope)
+    all_df2 <- all_df %>% rename(dayOfYear = FHeat_slope)
 }
 
 
 # select only the columns we require, and calculate the dates that we want
 # and identify Tasmanians sites, so that they can be added back in later
+
 all_df2 <- all_df2 %>% 
-    mutate(IsTas = ifelse((Lat < -40 & Lat > -45), "Y", "")) %>% 
-    select(Long, Lat, dayOfYear, IsTas)
+    mutate(IsTas = ifelse((Lat < -40 & Lat > -45), "Y", "")) 
+    
+if (ChartType == "TREND") {
+    if (valueOfInterest == "LFrost_Trend") {
+        all_df2 <- all_df2 %>% select(Long, Lat, dayOfYear, IsTas, LFrost_ttests)
+    } else {
+        all_df2 <- all_df2 %>% select(Long, Lat, dayOfYear, IsTas, FHeat_ttests)
+    }
+} else {
+    all_df2 <- all_df2 %>% select(Long, Lat, dayOfYear, IsTas)
+}
 
 if (ChartType == "FROST") {
     minData_df <- all_df2 %>% filter(dayOfYear <= filterlimit) 
@@ -175,6 +179,20 @@ if (ChartType == "FROST") {
 } else if (HasMaxLimit == TRUE) {
     #this currently only applies to DIFF...
     mainData_df <- all_df2 %>% filter(dayOfYear <= filterlimit) 
+} else if (valueOfInterest == "LFrost_Trend") {
+    minData_df <- all_df2 %>% 
+        filter(is.na(LFrost_ttests) == TRUE || LFrost_ttests > 0.10) %>% 
+        select(Long, Lat, dayOfYear, IsTas)
+    mainData_df <- all_df2 %>% 
+        filter(LFrost_ttests <= 0.10) %>% 
+        select(Long, Lat, dayOfYear, IsTas)
+} else if (valueOfInterest == "FHeat_Trend") {
+    minData_df <- all_df2 %>% 
+        filter(is.na(FHeat_ttests) == TRUE || FHeat_ttests > 0.10) %>% 
+        select(Long, Lat, dayOfYear, IsTas)
+    mainData_df <- all_df2 %>% 
+        filter(FHeat_ttests <= 0.10) %>% 
+        select(Long, Lat, dayOfYear, IsTas)
 } else {
     mainData_df <- all_df2
 }
@@ -201,8 +219,8 @@ as.tibble(aus_mapped)
 # need to do this as there is no CRS information with the AUS shape files
 st_crs(aus_mapped) <- st_crs(regions_mapped)
 
-if (ChartType == "HEAT" || ChartType == "FROST") {
-    print("chart type is HEAT or FROST")
+if (ChartType == "HEAT" || ChartType == "FROST" || ChartType == "TREND") {
+    print("chart type is HEAT or FROST or TREND")
     # get the coordintaes and format as SpatialPoints
     coords <- select(minData_df, Long, Lat)
     
@@ -251,6 +269,10 @@ mainData_points_sf[mainData_points_sf$IsTas == "Y", "InRegion"] <- TRUE
 #FILTER BASED ON THE REGIONS
 mainData_points_sf <- mainData_points_sf[mainData_points_sf$InRegion==TRUE,]
 
+#----------------------------------
+# Show the RColorBrewer palette
+#display.brewer.all()
+#----------------------------------
 
 if (ChartType == "FROST") {
     colPalette <- colorRampPalette(rev(brewer.pal(9, "YlGnBu")))
@@ -261,7 +283,8 @@ if (ChartType == "FROST") {
 } else if (ChartType == "DIFF") {
     colPalette <- colorRampPalette(brewer.pal(9, "BuPu"))
 } else if (ChartType == "TREND") {
-    colPalette <- colorRampPalette(rev(brewer.pal(9, "RdYlBu")))
+    #This has 11 colours in it ... do we need them all ... and how do we show blocks instead of gradient
+    colPalette <- colorRampPalette(rev(brewer.pal(10, "RdYlBu")))
 }
 
 #=================================================================
@@ -269,7 +292,7 @@ if (ChartType == "FROST") {
 p <- ggplot() + 
     geom_sf(data=aus_mapped) 
 
-if (ChartType == "HEAT" || ChartType == "FROST") {
+if (ChartType == "HEAT" || ChartType == "FROST" || ChartType="TREND") {
     print("Add in addition -grey- points for HEAT and FROST charts")
     p <- p + geom_sf(data=minData_points_sf, colour="grey", size=0.6, show.legend="point") 
 }
@@ -290,7 +313,12 @@ if (ChartType == "FWL") {
         p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 60))
     }
 } else if (ChartType == "TREND") {
-    p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.5, 0.5))
+    #p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.5, 0.5))
+    if (valueOfInterest == "LFrost_Trend") {
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-1.4, 1.4))
+    } else {
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.7, 0.7))
+    }    
 } else {
     #It is a Heat OR Frost Chart
     p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(182, 365), 
