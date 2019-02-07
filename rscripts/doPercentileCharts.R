@@ -22,8 +22,11 @@ str(all_df)
 #                 FHeat_Trend
 #   Flowering Windows: FWL1, FWL2, FWL3, FWL4, FWL5
 #   Differences:   DIFFH1020, DIFFH1030, DIFFH1040, DIFFH1050
+#                  DIFFH2030, DIFFH3040, DIFFH4050
 #                  Filtered where Diff <= 40
 #                  DIFFH1020_Max40, DIFFH1030_Max40, DIFFH1040_Max40, DIFFH1050_Max40
+#                  DIFFH1020_Max40, DIFFH1030_Max40, DIFFH1040_Max40, DIFFH1050_Max40
+#                  DIFFH2030_Max40, DIFFH3040_Max40, DIFFH4050_Max40
 valueOfInterest <- "FHeat_Trend"
 
 
@@ -100,10 +103,17 @@ if (valueOfInterest == "LFrost_70P") {
 } else if (valueOfInterest == "DIFFH1050" || valueOfInterest == "DIFFH1050_Max40") {
     chartSubTitle <- "Number of days between 10th and 50th percentile for Heat"
     
+} else if (valueOfInterest == "DIFFH2030" || valueOfInterest == "DIFFH2030_Max40") {
+    chartSubTitle <- "Number of days between 20th and 30th percentile for Heat"
+} else if (valueOfInterest == "DIFFH3040" || valueOfInterest == "DIFFH3040_Max40") {
+    chartSubTitle <- "Number of days between 30th and 40th percentile for Heat"
+} else if (valueOfInterest == "DIFFH4050" || valueOfInterest == "DIFFH4050_Max40") {
+    chartSubTitle <- "Number of days between 40th and 50th percentile for Heat"
+    
 } else if (valueOfInterest == "LFrost_Trend") {
-    chartSubTitle <- expression("Trend of Last Frost day (day "*y^"-1"*")")
+    chartSubTitle <- expression("Trend of last Frost day (day "*y^"-1"*")")
 } else if (valueOfInterest == "FHeat_Trend") {
-    chartSubTitle <- expression("Trend of First Heat day (day "*y^"-1"*")")
+    chartSubTitle <- expression("Trend of first Heat day (day "*y^"-1"*")")
 }
 print(paste0("Chart SubTitle is ", chartSubTitle))
 
@@ -147,6 +157,13 @@ if (valueOfInterest == "LFrost_70P") {
 } else if (valueOfInterest == "DIFFH1050" || valueOfInterest == "DIFFH1050_Max40") { 
     all_df2 <- all_df %>% rename(dayOfYear = DIFFH1050)
 
+} else if (valueOfInterest == "DIFFH2030" || valueOfInterest == "DIFFH2030_Max40") { 
+    all_df2 <- all_df %>% rename(dayOfYear = DIFFH2030)
+} else if (valueOfInterest == "DIFFH3040" || valueOfInterest == "DIFFH3040_Max40") { 
+    all_df2 <- all_df %>% rename(dayOfYear = DIFFH3040)
+} else if (valueOfInterest == "DIFFH4050" || valueOfInterest == "DIFFH4050_Max40") { 
+    all_df2 <- all_df %>% rename(dayOfYear = DIFFH4050)
+    
 } else if (valueOfInterest == "LFrost_Trend") { 
     all_df2 <- all_df %>% rename(dayOfYear = LFrost_slope)
 } else if (valueOfInterest == "FHeat_Trend") { 
@@ -187,8 +204,10 @@ if (ChartType == "FROST") {
         filter(LFrost_ttests <= 0.10) %>% 
         select(Long, Lat, dayOfYear, IsTas)
 } else if (valueOfInterest == "FHeat_Trend") {
+    #modLMC - 31/01/2019 - phone conversation with Fernanda, eliminate anything > 0.2
     minData_df <- all_df2 %>% 
         filter(is.na(FHeat_ttests) == TRUE || FHeat_ttests > 0.10) %>% 
+        filter(dayOfYear <= 0.2) %>% 
         select(Long, Lat, dayOfYear, IsTas)
     mainData_df <- all_df2 %>% 
         filter(FHeat_ttests <= 0.10) %>% 
@@ -315,9 +334,11 @@ if (ChartType == "FWL") {
 } else if (ChartType == "TREND") {
     #p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.5, 0.5))
     if (valueOfInterest == "LFrost_Trend") {
-        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-1.4, 1.4))
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-1.5, 1.5))
     } else {
-        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.7, 0.7))
+        #modLMC - 31/01/2019 - phone conversation with Fernanda, eliminate anything > 0.2
+        #p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.7, 0.7))
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.75, 0.25))
     }    
 } else {
     #It is a Heat OR Frost Chart

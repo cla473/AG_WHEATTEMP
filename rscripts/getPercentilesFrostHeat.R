@@ -402,4 +402,22 @@ newPercentiles <- newPercentiles %>%
 new_Percentile <- paste0(outFilePath, "/", "percentiles.csv")
 write.csv(newPercentiles, file=new_Percentile, row.names=FALSE)
 
+#==============================================================================================
+# 02 February 2019
+# Need to add to the DIFF set:
+#   DIFF2030, DIFF3040, DIFF4050
+#==============================================================================================
 
+rm(list = ls())
+library(tidyverse)
+
+outFilePath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs'
+outfile_Percentile <- paste0(outFilePath, "/", "percentiles.csv")
+percentiles_df <- read_csv(outfile_Percentile)
+
+percentiles_df <- percentiles_df %>% 
+    mutate(DIFFH2030 = FHeat_30P - FHeat_20P,
+           DIFFH3040 = FHeat_40P - FHeat_30P,
+           DIFFH4050 = FHeat_50P - FHeat_40P)
+
+write.csv(percentiles_df, file=outfile_Percentile, row.names=FALSE)
