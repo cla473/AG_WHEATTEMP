@@ -1,4 +1,4 @@
-rm(list = ls())
+#rm(list = ls())
 library(tidyverse)
 library(sf)
 library(ggplot2)
@@ -302,8 +302,15 @@ if (ChartType == "FROST") {
 } else if (ChartType == "DIFF") {
     colPalette <- colorRampPalette(brewer.pal(9, "BuPu"))
 } else if (ChartType == "TREND") {
-    #This has 11 colours in it ... do we need them all ... and how do we show blocks instead of gradient
-    colPalette <- colorRampPalette(rev(brewer.pal(10, "RdYlBu")))
+    if (valueOfInterest == "FHeat_Trend") { 
+        # need to take the Dark Red out of thiss grouping.
+        #newPal <- c("#D73027", "#F46D43", "#FDAE61", "#FEE090", "#FFFFBF", "#E0F3F8", "#ABD9E9", "#74ADD1", "#4575B4")
+        newPal <- c("#F46D43", "#FDAE61", "#FEE090", "#FFFFBF", "#E0F3F8", "#ABD9E9", "#74ADD1", "#4575B4")
+        colPalette <- colorRampPalette(rev(newPal))
+    } else {
+        #This has 11 colours in it ... do we need them all ... and how do we show blocks instead of gradient
+        colPalette <- colorRampPalette(rev(brewer.pal(10, "RdYlBu")))
+    }
 }
 
 #=================================================================
