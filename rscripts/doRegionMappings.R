@@ -252,11 +252,6 @@ ggsave(outfile, width=7, height=6, units="in")
 #change the size of the points
 #re-order the Legend and change its title
 
-palette()
-newCols <- c("black", "red", "green3", "blue", "cyan", "magenta", "yellow", "purple", "brown",
-        "springgreen1", "wheat2", "orange1", "lightblue1", "palegreen1", "pink2")
-palette(newCols)
-
 brewer.pal(n=12, name="Paired")
 brewer.pal(n=11, name="PiYG")
 newCols <- c("#A6CEE3", "#1F78B4", "#053061", "#B2DF8A", "#33A02C", "#276419", "#FB9A99", "#E31A1C", 
@@ -285,9 +280,47 @@ outfile <- paste0(mapPath, "/", "mapRegionsNEWColours", ".png")
 ggsave(outfile, width=7, height=6, units="in")
 
 
+cells_df <- cells_df %>% 
+    mutate(RegionID = case_when(NewRegion == 1 ~ "QLD1", 
+                                NewRegion == 2 ~ "QLD2",    
+                                NewRegion == 4 ~ "QLD3_NSW1",
+                                NewRegion == 3 ~ "NSW2",    
+                                NewRegion == 5 ~ "NSW3",
+                                NewRegion == 6 ~ "NSW4",
+                                NewRegion == 7 ~ "VIC1",
+                                NewRegion == 8 ~ "VIC2_SA1",
+                                NewRegion == 9 ~ "SA2",
+                                NewRegion == 10 ~ "SA3",
+                                NewRegion == 11 ~ "WA1",
+                                NewRegion == 12 ~ "WA2",
+                                NewRegion == 13 ~ "WA3",
+                                NewRegion == 14 ~ "WA4",
+                                NewRegion == 15 ~ "TAS1" )) 
+
 
 outCells_df <- as.data.frame(cells_df) %>% 
-    select(Location, WheatRegion, WheatRegionDesc) 
+    select(Location, RegionID, Zone = Region, Orig_Region = WheatRegion) 
 
 outfileCsv <- paste0(outPath, "/", "RegionMappings.csv")
 write.csv(outCells_df, file=outfileCsv, row.names=FALSE)
+
+
+#-------------------------------------------------------------------------------------
+#Need to combine the percentile file with the regional mapping file so that Fernanda can identify those cells within regions
+filePath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs'
+mappingFile <- paste0(filePath, "/", "RegionMappings.csv")
+percentileFile <- paste0(filePath, "/", "percentiles.csv")
+newPercentileFile <- paste0(filePath, "/", "PercentilesByRegion.csv")
+mapping_df <- read_csv(mappingFile) 
+percentile_df <- read_csv(percentileFile)
+
+new_df <- percentile_df %>% 
+    left_join(mapping_df, by="Location") %>% 
+    select(-Orig_Region) %>% 
+    select(Location, Long, Lat, RegionID, Zone, LFrost_70P:DIFFH4050)
+write.csv(new_df, file=newPercentileFile, row.names=FALSE)
+new_df <- new_df %>% filter(!is.na(RegionID))
+newPercentileRegion <- paste0(filePath, "/", "PercentilesOnlyForRegion.csv")
+write.csv(new_df, file=newPercentileRegion, row.names=FALSE)
+#-------------------------------------------------------------------------------------
+

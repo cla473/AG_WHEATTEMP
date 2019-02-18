@@ -302,15 +302,17 @@ if (ChartType == "FROST") {
 } else if (ChartType == "DIFF") {
     colPalette <- colorRampPalette(brewer.pal(9, "BuPu"))
 } else if (ChartType == "TREND") {
-    if (valueOfInterest == "FHeat_Trend") { 
-        # need to take the Dark Red out of thiss grouping.
-        #newPal <- c("#D73027", "#F46D43", "#FDAE61", "#FEE090", "#FFFFBF", "#E0F3F8", "#ABD9E9", "#74ADD1", "#4575B4")
-        newPal <- c("#F46D43", "#FDAE61", "#FEE090", "#FFFFBF", "#E0F3F8", "#ABD9E9", "#74ADD1", "#4575B4")
-        colPalette <- colorRampPalette(rev(newPal))
-    } else {
+    #if (valueOfInterest == "FHeat_Trend") { 
+    #    # need to take the Dark Red out of thiss grouping.
+    #    #newPal <- c("#D73027", "#F46D43", "#FDAE61", "#FEE090", "#FFFFBF", "#E0F3F8", "#ABD9E9", "#74ADD1", "#4575B4")
+    #    newPal <- c("#F46D43", "#FDAE61", "#FEE090", "#FFFFBF", "#E0F3F8", "#ABD9E9", "#74ADD1", "#4575B4")
+    #    colPalette <- colorRampPalette(rev(newPal))
+    #} else {
         #This has 11 colours in it ... do we need them all ... and how do we show blocks instead of gradient
-        colPalette <- colorRampPalette(rev(brewer.pal(10, "RdYlBu")))
-    }
+    #colPalette <- colorRampPalette(rev(brewer.pal(10, "RdYlBu")))
+    #modLMC - 18/02/2019 - don't reverse the colour scale
+    colPalette <- colorRampPalette(brewer.pal(10, "RdYlBu"))
+    #}
 }
 
 #=================================================================
@@ -344,8 +346,10 @@ if (ChartType == "FWL") {
         p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-1.5, 1.5))
     } else {
         #modLMC - 31/01/2019 - phone conversation with Fernanda, eliminate anything > 0.2
-        #p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.7, 0.7))
-        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.75, 0.25))
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.75, 0.75),
+                                        breaks=c(-0.75, -0.5, -0.25, 0, 0.25, 0.50, 0.75),
+                                        labels=c(-0.75, -0.5, -0.25, 0, 0.25, 0.50, 0.75))
+        #p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.75, 0.25))
     }    
 } else {
     #It is a Heat OR Frost Chart
@@ -376,6 +380,7 @@ p
 
 #=================================================================
 # SAVING TAKES ALMOST AS LONG AS RENDERING
+#outfile <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/maps/FHeat_Trend_new.png"
 ggsave(outfile, width=7, height=6, units="in")
 print(paste0("File Saved as ", outfile))
 
