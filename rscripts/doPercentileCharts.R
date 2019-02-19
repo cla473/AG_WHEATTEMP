@@ -1,7 +1,6 @@
 #rm(list = ls())
 library(tidyverse)
 library(sf)
-library(ggplot2)
 library(viridis)
 library(rvest)
 library(ggrepel)
@@ -10,7 +9,8 @@ library(RColorBrewer)
 
 filePath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs'
 mapPath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/maps'
-dataFile <- paste0(filePath, "/", "percentiles.csv")
+#dataFile <- paste0(filePath, "/", "percentiles.csv")
+dataFile <- paste0(filePath, "/", "PercentilesOnlyForRegion.csv")
 
 all_df <- read_csv(dataFile)
 str(all_df)
@@ -27,12 +27,13 @@ str(all_df)
 #                  DIFFH1020_Max40, DIFFH1030_Max40, DIFFH1040_Max40, DIFFH1050_Max40
 #                  DIFFH1020_Max40, DIFFH1030_Max40, DIFFH1040_Max40, DIFFH1050_Max40
 #                  DIFFH2030_Max40, DIFFH3040_Max40, DIFFH4050_Max40
-valueOfInterest <- "FHeat_Trend"
+valueOfInterest <- "FWL1"
 
 
 #these are the default values
 filterlimit <- 0
 outfile <- paste0(mapPath, "/", valueOfInterest, ".png")
+
 
 ChartType <- ""
 HasMaxLimit <- FALSE
@@ -333,7 +334,14 @@ uniqueValues <- length(unique(mainData_df$dayOfYear))
 print(paste0("Min value: ", minLimit, ", Max value: ", maxLimit, ", Unique values: ", uniqueValues))
 
 if (ChartType == "FWL") {
-    p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 183))
+    if (valueOfInterest == "FWL1") {
+        #New range for cells in new regions
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-20, 140),
+                                        breaks=c(-20, 0, 20, 40, 60, 80, 100, 120, 140),
+                                        labels=c(-20, 0, 20, 40, 60, 80, 100, 120, 140))
+    } else {
+        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 183))
+    }
 } else if (ChartType == "DIFF") {
     if (HasMaxLimit == TRUE) {
         p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(0, 40))
@@ -396,6 +404,59 @@ print(paste0("File Saved as ", outfile))
 #generateChart(all_df, filePath, mapPath, dataFile, valueOfInterest) 
 
 
+#=================================================================
+# DO A BOXPLOT
+#=================================================================
+
+# Y title: Flowering windows
+# Data FLW1 .... FLW5
+# Legend:  10PH-90PF, 20PH-90PF, 30PH-90PF, 40PH-90PF, 50PH-90PF
+filePath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs'
+#dataFile <- paste0(filePath, "/", "percentiles.csv")
+#dataFile <- paste0(filePath, "/", "percentilesByRegion.csv")
+dataFile <- paste0(filePath, "/", "PercentilesOnlyForRegion.csv")
+all_df <- read_csv(dataFile)
+
+
+diff_df <- all_df %>% 
+    select(Location, RegionID, DIFFH1020:DIFFH1050) %>% 
+    gather(FlowerWindow, Days, DIFFH1020:DIFFH1050) 
+
+#qnt <- quantile(diff_df$Days, probs=c(0.05, 0.10, 0.90, 0.95))
+
+diffMedian <- summarise(group_by(diff_df, FlowerWindow), MD = median(Days), SD = sd(Days))
+
+diff_df <- diff_df %>% 
+    left_join(diffMedian, by="FlowerWindow")
+
+diff_df <- diff_df %>%
+    mutate(sd1.lower = MD - (SD*2),
+           sd1.upper = MD - SD,
+           sd2.lower = MD + SD,
+           sd2.upper = MD + (SD*2)) %>% 
+    mutate(stat = ifelse(Days <= sd1.lower | Days >=sd2.upper, 5,
+                         ifelse (Days > sd1.lower & Days <= sd1.upper, 90,
+                                 ifelse(Days > sd2.lower & Days <= sd2.upper, 90, 50))))
+
+head(diff_df, 5)
+
+p2 <- ggplot() +
+    geom_boxplot(data=diff_df, aes(x=factor(FlowerWindow), y=Days), outlier.color = "NA") +
+    geom_point(data=diff_df[diff_df$stat < 6,], aes(x=factor(FlowerWindow), y=Days), 
+               colour="firebrick1", size = 2, shape = 8) +
+    geom_point(data=diff_df[diff_df$stat > 89,], aes(x=factor(FlowerWindow), y=Days), 
+               colour="darkoliveGreen4", size = 2, shape = 8) +
+    geom_text(data = diffMedian, aes(x=FlowerWindow, y=MD, label = MD),
+              position=position_dodge(width=0.8), size=3, vjust=-0.5) +
+    labs(x="Differences",
+         y="Number of day between Heat Percentiles",
+         title="xxxx")
+p2
+
+mapPath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/maps'
+outfile <- paste0(mapPath, "/", "FloweringDiffBoxplot.png")
+ggsave(outfile, width=7, height=6, units="in")
+print(paste0("File Saved as ", outfile))
 
 
 
