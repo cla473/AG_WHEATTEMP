@@ -10,7 +10,9 @@ library(RColorBrewer)
 filePath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs'
 mapPath <- '/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/maps'
 #dataFile <- paste0(filePath, "/", "percentiles.csv")
+
 dataFile <- paste0(filePath, "/", "PercentilesOnlyForRegion.csv")
+filteredByRegion <- TRUE
 
 all_df <- read_csv(dataFile)
 str(all_df)
@@ -27,7 +29,7 @@ str(all_df)
 #                  DIFFH1020_Max40, DIFFH1030_Max40, DIFFH1040_Max40, DIFFH1050_Max40
 #                  DIFFH1020_Max40, DIFFH1030_Max40, DIFFH1040_Max40, DIFFH1050_Max40
 #                  DIFFH2030_Max40, DIFFH3040_Max40, DIFFH4050_Max40
-valueOfInterest <- "FWL1"
+valueOfInterest <- "LFrost_Trend"
 
 
 #these are the default values
@@ -334,7 +336,7 @@ uniqueValues <- length(unique(mainData_df$dayOfYear))
 print(paste0("Min value: ", minLimit, ", Max value: ", maxLimit, ", Unique values: ", uniqueValues))
 
 if (ChartType == "FWL") {
-    if (valueOfInterest == "FWL1") {
+    if (filteredByRegion == TRUE) {
         #New range for cells in new regions
         p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-20, 140),
                                         breaks=c(-20, 0, 20, 40, 60, 80, 100, 120, 140),
@@ -351,13 +353,25 @@ if (ChartType == "FWL") {
 } else if (ChartType == "TREND") {
     #p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.5, 0.5))
     if (valueOfInterest == "LFrost_Trend") {
-        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-1.5, 1.5))
+        if (filteredByRegion == TRUE) {
+            p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-1.6, 1.6),
+                                            breaks=c(-1.5, -1.0, -0.5, 0, 0.5, 1.0, 1.5),
+                                            labels=c(-1.5, -1.0, -0.5, 0, 0.5, 1.0, 1.5))
+            
+        } else {
+            p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-1.5, 1.5))
+        }
     } else {
-        #modLMC - 31/01/2019 - phone conversation with Fernanda, eliminate anything > 0.2
-        p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.75, 0.75),
-                                        breaks=c(-0.75, -0.5, -0.25, 0, 0.25, 0.50, 0.75),
-                                        labels=c(-0.75, -0.5, -0.25, 0, 0.25, 0.50, 0.75))
-        #p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.75, 0.25))
+        if (filteredByRegion == TRUE) {
+            
+        } else {
+            #modLMC - 31/01/2019 - phone conversation with Fernanda, eliminate anything > 0.2
+            p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.75, 0.75),
+                                            breaks=c(-0.75, -0.5, -0.25, 0, 0.25, 0.50, 0.75),
+                                            labels=c(-0.75, -0.5, -0.25, 0, 0.25, 0.50, 0.75))
+            #p <- p + scale_colour_gradientn(colours=colPalette(10), limits=c(-0.75, 0.25))
+            
+        }
     }    
 } else {
     #It is a Heat OR Frost Chart
