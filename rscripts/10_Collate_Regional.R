@@ -21,8 +21,19 @@ cults_df <- read_csv(cultivarFile)
 
 
 #requiredRegion <- "TAS1"
-requiredRegion <- "QLD3_NSW1"
+#requiredRegion <- "QLD3_NSW1"
 #requiredRegion <- "WA1"
+#requiredRegion <- "QLD1"
+#requiredRegion <- "QLD2"
+#requiredRegion <- "NSW2"
+#requiredRegion <- "NSW3"
+#requiredRegion <- "NSW4"
+requiredRegion <- "VIC1"
+#requiredRegion <- "VIC2_SA1"
+#requiredRegion <- "SA2"
+#requiredRegion <- "WA2"
+#requiredRegion <- "WA3"
+#requiredRegion <- "WA4"
 
 #---------------------------------------------------------------------
 # FUNCTION: Collate_Regional_Info
@@ -78,7 +89,6 @@ phases <- c("06_GrainSet", "07_GrainFilling")
 #}
 
 
-
 #Need to filter the cellCults by each cultivar
 cultivars <- unlist(all_cellcults_df %>% 
     distinct(Cultivar))
@@ -89,7 +99,7 @@ cultivars <- unlist(all_cellcults_df %>%
 #cult <- "Emurock"
 
 #QLD1_NSW1 
-cult <- "Sentinel"
+#cult <- "Sentinel"
 #cult <- "Impala"
 #cult <- "Hartog"
 
@@ -97,6 +107,22 @@ cult <- "Sentinel"
 #cult <- "Mace"
 # cult <- "Thornbill"
 # cult <- "EGAGregory"
+
+#QLD1
+#cult <- "EGAGregory"
+#cult <- "Gauntlet"
+#cult <- "Hartog"
+
+#QLD2
+#cult <- "EGAGregory"
+#cult <- "Impala"
+#cult <- "Hartog"
+
+#VIC1
+#cult <- "Wedgetail"
+cult <- "Scout"
+#cult <- "Emurock"
+
 #for (cult in cultivars) {
     newCultivar <- TRUE
 
@@ -223,12 +249,16 @@ cult <- "Sentinel"
 #dataFile <- paste0(outFilePath, "/QLD3_NSW1/Impala_06_GrainSet.csv")
 #dataFile <- paste0(outFilePath, "/QLD3_NSW1/Impala_07_GrainFilling.csv")
 #dataFile <- paste0(outFilePath, "/QLD3_NSW1/Sentinel_06_GrainSet.csv")
-dataFile <- paste0(outFilePath, "/QLD3_NSW1/Sentinel_07_GrainFilling.csv")
-#data_df <- read_csv(dataFile)
+dataFile <- paste0(outFilePath, "/VIC1/Wedgetail_07_GrainFilling.csv")
+data_df <- read_csv(dataFile)
+#data_df <- df_07_GrainFilling
 
-data_df <- df_07_GrainFilling
+#what is in the current file
+cultivars <- unlist(data_df %>% distinct(Cultivar))
+phases <- unlist(data_df %>% distinct(phases))
 sowDates <- unlist(data_df %>% distinct(SowDate))
 
+#Make the output file smaller by splitting the file into Maturity groups 
 data_df_early <- data_df %>% filter(SowDate %in% earlySowDates)
 earlyFilename <- str_replace(dataFile, ".csv", "_early.csv")
 write_csv(data_df_early, path = earlyFilename, append=FALSE)
@@ -240,6 +270,10 @@ write_csv(data_df_mid, path = midFilename, append=FALSE)
 data_df_late <- data_df %>% filter(SowDate %in% lateSowDates)
 lateFilename <- str_replace(dataFile, ".csv", "_late.csv")
 write_csv(data_df_late, path = lateFilename, append=FALSE)
+
+#remove any unwanted data from the file (ie, unwanted phases)
+#data_df <- data_df %>% filter(Cultivar == "Wedgetail")
+#write_csv(data_df, path = dataFile, append=FALSE)
 
 #---------------------------------------------------------------------
 requiredRegion <- "QLD3_NSW1"
