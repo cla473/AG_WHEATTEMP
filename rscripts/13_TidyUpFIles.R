@@ -6,26 +6,36 @@ library(tidyverse)
 apsimFilePath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Summaries/"
 outFilePath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/CollatedData"
 
+#region <- "SA2"
+#region <- "WA2"
+region <- "WA3"
 
+#cult <- "Emurock"
+#cult <- "Mace"
+cult <- "Yitpi"
 
-dataFile <- paste0(outFilePath, "/SA2/Mace_06_GrainSet_fast_fast.csv")
+#phase <- "06_GrainSet"
+phase <- "07_GrainFilling"
+
+#mat <- "fast"
+#mat <- "mid"
+mat <- "long"
+dataFile <- paste0(outFilePath, "/", region, "/", cult, "_", phase, "_", mat, ".csv")
 data_df <- read_csv(dataFile)
-#data_df <- df_07_GrainFilling
+
+#what is in the current file
+cultivars <- unlist(data_df %>% distinct(Cultivar))
+data_df <- data_df %>% filter(Cultivar == cult)
+write_csv(data_df, path = dataFile, append=FALSE)
+
+phases <- unlist(data_df %>% distinct(phases))
+
+sowDates <- unlist(data_df %>% distinct(SowDate))
 
 earlySowDates <- c("15-mar", "1-apr", "15-apr", "29-apr")
 midSowDates <- c("13-may", "27-may", "3-jun")
 lateSowDates <- c("17-jun", "1-jul", "15-jul", "29-jul")
 
-
-#what is in the current file
-cultivars <- unlist(data_df %>% distinct(Cultivar))
-data_df <- data_df %>% filter(Cultivar == "Mace")
-
-earlyFilename <- str_replace(dataFile, "_fast_fast.csv", "_fast.csv")
-write_csv(data_df, path = earlyFilename, append=FALSE)
-
-phases <- unlist(data_df %>% distinct(phases))
-sowDates <- unlist(data_df %>% distinct(SowDate))
 
 #Make the output file smaller by splitting the file into Maturity groups 
 data_df_early <- data_df %>% filter(SowDate %in% earlySowDates)
