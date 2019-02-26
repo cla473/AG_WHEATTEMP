@@ -33,23 +33,23 @@ working_df <- working_df %>%
     filter(LineNo == lineNo)
 
 requiredRegion <- as.character(working_df %>% select(RegionID))
-Cultivar <- as.character(working_df %>% select(Cultivar))
-Maturity <- as.character(working_df %>% select(MaturityGroup))
+requiredCultivar <- as.character(working_df %>% select(Cultivar))
+requiredMaturity <- as.character(working_df %>% select(MaturityGroup))
 
-# if (Maturity == "Fast") {
+# if (requiredMaturity == "Fast") {
 #     print("Maturity is fast!")
-# } else if (Maturity == "Mid") {  
+# } else if (requiredMaturity == "Mid") {  
 #     print("Maturity is medium!")
-# } else if (Maturity == "Long") { 
+# } else if (requiredMaturity == "Long") { 
 #     print("Maturity is long!")
 # } else {
 #     print("Maturity is undefined ......!")
 # }
 
-if (is.na(Maturity) || length(Maturity) <= 0) {
-    Maturity <- "No"
+if (is.na(requiredMaturity) || length(requiredMaturity) <= 0) {
+    requiredMaturity <- "No"
 }
-print(paste0("Region is ", requiredRegion, " with ", Cultivar, " cultivar and ", Maturity, " maturity."))
+print(paste0("Region is ", requiredRegion, " with ", Cultivar, " cultivar and ", requiredMaturity, " maturity."))
 
 #This is the start of the working process
 apsimFilePath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Summaries/"
@@ -94,7 +94,7 @@ dir.create(file.path(outFilePath, requiredRegion), showWarnings = FALSE)
 newCultivar <- TRUE
 
 cellcults_df <- all_cellcults_df %>%
-    filter(Cultivar == Cultivar)
+    filter(Cultivar == requiredCultivar)
 
 #row <- 1
 for (row in 1:nrow(cellcults_df)) {
@@ -118,11 +118,11 @@ for (row in 1:nrow(cellcults_df)) {
                        endDate, endDOY, dayCount:FqDaysMaxT_GT40)
     
             #add the filtering by the maturity, if required 
-            if (Maturity == "Fast") {
+            if (requiredMaturity == "Fast") {
                 filtered_df <- filtered_df %>% filter(SowDate %in% FastSowDates)
-            } else if (Maturity == "Mid") {  
+            } else if (requiredMaturity == "Mid") {  
                 filtered_df <- filtered_df %>% filter(SowDate %in% MidSowDates) 
-            } else if (Maturity == "Long") { 
+            } else if (requiredMaturity == "Long") { 
                 filtered_df <- filtered_df %>% filter(SowDate %in% LongSowDates) 
             }
     
@@ -174,13 +174,13 @@ for (row in 1:nrow(cellcults_df)) {
 }
 
 if (exists("df_06_GrainSet")) {
-    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", Cultivar, "_06_GrainSet_fast.csv")
+    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", Cultivar, "_06_GrainSet.csv")
     
-    if (Maturity == "Fast") {
+    if (requiredMaturity == "Fast") {
         outfile <- str_replace(outfile, ".csv", "_fast.csv")
-    } else if (Maturity == "Fast") {
+    } else if (requiredMaturity == "Mid") {
         outfile <- str_replace(outfile, ".csv", "_mid.csv") 
-    } else if (Maturity == "Long") { 
+    } else if (requiredMaturity == "Long") { 
         outfile <- str_replace(outfile, ".csv", "_long.csv") 
     }
 
@@ -189,11 +189,11 @@ if (exists("df_06_GrainSet")) {
 if (exists("df_07_GrainFilling")) {
     outfile = paste0(file.path(outFilePath, requiredRegion), "/", Cultivar, "_07_GrainFilling.csv")
 
-    if (Maturity == "Fast") {
+    if (requiredMaturity == "Fast") {
         outfile <- str_replace(outfile, ".csv", "_fast.csv")
-    } else if (Maturity == "Fast") {
+    } else if (requiredMaturity == "Mid") {
         outfile <- str_replace(outfile, ".csv", "_mid.csv") 
-    } else if (Maturity == "Long") { 
+    } else if (requiredMaturity == "Long") { 
         outfile <- str_replace(outfile, ".csv", "_long.csv") 
     }
     
