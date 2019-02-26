@@ -49,7 +49,8 @@ requiredMaturity <- as.character(working_df %>% select(MaturityGroup))
 if (is.na(requiredMaturity) || length(requiredMaturity) <= 0) {
     requiredMaturity <- "No"
 }
-print(paste0("Region is ", requiredRegion, " with ", Cultivar, " cultivar and ", requiredMaturity, " maturity."))
+print(paste0("Region is ", requiredRegion, " with ", requiredCultivar, " cultivar and ", requiredMaturity, " 
+maturity."))
 
 #This is the start of the working process
 apsimFilePath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Summaries/"
