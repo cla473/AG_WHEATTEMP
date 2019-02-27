@@ -49,8 +49,7 @@ requiredMaturity <- as.character(working_df %>% select(MaturityGroup))
 if (is.na(requiredMaturity) || length(requiredMaturity) <= 0) {
     requiredMaturity <- "No"
 }
-print(paste0("Region is ", requiredRegion, " with ", requiredCultivar, " cultivar and ", requiredMaturity, " 
-maturity."))
+print(paste0("Region is ", requiredRegion, " with ", requiredCultivar, " cultivar and ", requiredMaturity, " maturity."))
 
 #This is the start of the working process
 apsimFilePath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/Summaries/"
@@ -83,7 +82,7 @@ cells_df <- region_df %>%
 #now combine the cells with the specific cults
 all_cellcults_df <- cells_df %>%
     left_join(subCults_df, by="RegionID") %>%
-    mutate(filename = paste0(apsimFilePath, Location, "/Summary_", Cultivar, ".csv")) %>%
+    mutate(filename = paste0(apsimFilePath, Location, "/Summary_", requiredCultivar, ".csv")) %>%
     mutate(haveData = file.exists(filename)) %>%
     filter(haveData == TRUE)
 
@@ -175,7 +174,7 @@ for (row in 1:nrow(cellcults_df)) {
 }
 
 if (exists("df_06_GrainSet")) {
-    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", Cultivar, "_06_GrainSet.csv")
+    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_06_GrainSet.csv")
     
     if (requiredMaturity == "Fast") {
         outfile <- str_replace(outfile, ".csv", "_fast.csv")
@@ -188,7 +187,7 @@ if (exists("df_06_GrainSet")) {
     write_csv(df_06_GrainSet, path=outfile, append=FALSE)
 }
 if (exists("df_07_GrainFilling")) {
-    outfile = paste0(file.path(outFilePath, requiredRegion), "/", Cultivar, "_07_GrainFilling.csv")
+    outfile = paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_07_GrainFilling.csv")
 
     if (requiredMaturity == "Fast") {
         outfile <- str_replace(outfile, ".csv", "_fast.csv")
