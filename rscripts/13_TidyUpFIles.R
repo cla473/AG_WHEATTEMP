@@ -8,11 +8,17 @@ outFilePath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/CollatedData"
 
 #region <- "SA2"
 #region <- "WA2"
-region <- "WA3"
+#region <- "WA3"
+#region <- "QLD1"
+region <- "QLD2"
 
 #cult <- "Emurock"
 #cult <- "Mace"
-cult <- "Yitpi"
+#cult <- "Yitpi"
+cult <- "EGAGregory"
+#cult <- "Gauntlet"
+#cult <- "Hartog"
+#cult <- "Impala"
 
 #phase <- "06_GrainSet"
 phase <- "07_GrainFilling"
@@ -20,7 +26,8 @@ phase <- "07_GrainFilling"
 #mat <- "fast"
 #mat <- "mid"
 mat <- "long"
-dataFile <- paste0(outFilePath, "/", region, "/", cult, "_", phase, "_", mat, ".csv")
+#dataFile <- paste0(outFilePath, "/", region, "/", cult, "_", phase, "_", mat, ".csv")
+dataFile <- paste0(outFilePath, "/", region, "/", cult, "_", phase, ".csv")
 data_df <- read_csv(dataFile)
 
 #what is in the current file

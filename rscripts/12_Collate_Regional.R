@@ -35,6 +35,7 @@ working_df <- working_df %>%
 requiredRegion <- as.character(working_df %>% select(RegionID))
 requiredCultivar <- as.character(working_df %>% select(Cultivar))
 requiredMaturity <- as.character(working_df %>% select(MaturityGroup))
+requiredPhase <- as.character(working_df %>% select(Phase))
 
 # if (requiredMaturity == "Fast") {
 #     print("Maturity is fast!")
@@ -60,7 +61,7 @@ outFilePath <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/CollatedData"
 regionFile <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs/RegionMappings.csv"
 cultivarFile <- "/OSM/CBR/AG_WHEATTEMP/source/ApsimNG-LC/metCalcs/CultivarListing.csv"
 
-phases <- c("06_GrainSet", "07_GrainFilling")
+#phases <- c("06_GrainSet", "07_GrainFilling")
 
 FastSowDates <- c("15-mar", "1-apr", "15-apr", "29-apr")
 MidSowDates <- c("13-may", "27-may", "3-jun")
@@ -173,31 +174,58 @@ for (row in 1:nrow(cellcults_df)) {
     }
 }
 
-if (exists("df_06_GrainSet")) {
+if (exists("df_01_Germinating")) {
+    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_01_Germinating.csv")
+} else if (exists("df_02_Emerging")) {
+    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_02_Emerging.csv")
+} else if (exists("df_03_Vegetative")) {
+    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_03_Vegetative.csv")
+} else if (exists("df_04_StemElongation")) {
+    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_04_StemElongation.csv")
+} else if (exists("df_05_EarlyReproductive")) {
+    outfile <- paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_05_EarlyReproductive.csv")
+} else if (exists("df_06_GrainSet")) {
     outfile <- paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_06_GrainSet.csv")
-    
-    if (requiredMaturity == "Fast") {
-        outfile <- str_replace(outfile, ".csv", "_fast.csv")
-    } else if (requiredMaturity == "Mid") {
-        outfile <- str_replace(outfile, ".csv", "_mid.csv") 
-    } else if (requiredMaturity == "Long") { 
-        outfile <- str_replace(outfile, ".csv", "_long.csv") 
-    }
-
-    write_csv(df_06_GrainSet, path=outfile, append=FALSE)
-}
-if (exists("df_07_GrainFilling")) {
+} else if (exists("df_07_GrainFilling")) {
     outfile = paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_07_GrainFilling.csv")
-
-    if (requiredMaturity == "Fast") {
-        outfile <- str_replace(outfile, ".csv", "_fast.csv")
-    } else if (requiredMaturity == "Mid") {
-        outfile <- str_replace(outfile, ".csv", "_mid.csv") 
-    } else if (requiredMaturity == "Long") { 
-        outfile <- str_replace(outfile, ".csv", "_long.csv") 
-    }
-    
-    write_csv(df_07_GrainFilling, path = outfile, append=FALSE)
+} else if (exists("df_08_Maturing")) {
+    outfile = paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_08_Maturing.csv")
+} else if (exists("df_09_Ripening")) {
+    outfile = paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_09_Ripening.csv")
+} else if (exists("df_10_Harvest")) {
+    outfile = paste0(file.path(outFilePath, requiredRegion), "/", requiredCultivar, "_10_Harvest.csv")
 }
+
+if (requiredMaturity == "Fast") {
+    outfile <- str_replace(outfile, ".csv", "_fast.csv")
+} else if (requiredMaturity == "Mid") {
+    outfile <- str_replace(outfile, ".csv", "_mid.csv") 
+} else if (requiredMaturity == "Long") { 
+    outfile <- str_replace(outfile, ".csv", "_long.csv") 
+}
+
+
+if (exists("df_01_Germinating")) {
+    write_csv(df_01_Germinating, path=outfile, append=FALSE)
+} else if (exists("df_02_Emerging")) {
+    write_csv(df_02_Emerging, path=outfile, append=FALSE)
+} else if (exists("df_03_Vegetative")) {
+    write_csv(df_03_Vegetative, path=outfile, append=FALSE)
+} else if (exists("df_04_StemElongation")) {
+    write_csv(df_04_StemElongation, path=outfile, append=FALSE)
+} else if (exists("df_05_EarlyReproductive")) {
+    write_csv(df_05_EarlyReproductive, path=outfile, append=FALSE)
+} else if (exists("df_06_GrainSet")) {
+    write_csv(df_06_GrainSet, path=outfile, append=FALSE)
+} else if (exists("df_07_GrainFilling")) {
+    write_csv(df_07_GrainFilling, path = outfile, append=FALSE)
+} else if (exists("df_08_Maturing")) {
+    write_csv(df_08_Maturing, path = outfile, append=FALSE)
+} else if (exists("df_09_Ripening")) {
+    write_csv(df_09_Ripening, path = outfile, append=FALSE)
+} else if (exists("df_10_Harvest")) {
+    write_csv(df_10_Harvest, path = outfile, append=FALSE)
+}
+
 
 
